@@ -3,16 +3,32 @@ import Dropdown from '@/Components/Dropdown';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Link, usePage } from '@inertiajs/react';
-import { useState } from 'react';
-
+import { useEffect, useState } from 'react';
+import { FaSun, FaMoon } from 'react-icons/fa';
+import { motion, spring } from 'framer-motion';
 export default function AuthenticatedLayout({ header, children }) {
     const user = usePage().props.auth.user;
+    const score = usePage().props.auth.score;
+    console.log(score);
 
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
+    const [isDarkMode, setIsDarkMode] = useState(() => {
+        return localStorage.getItem('theme') === 'dark' || false;
+    });
+
+    useEffect(() => {
+        if (isDarkMode) {
+            document.body.classList.add('dark');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.body.classList.remove('dark');
+            localStorage.setItem('theme', 'light');
+        }
+    }, [isDarkMode]);
 
     return (
-        <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
+        <div className="min-h-screen bg-gray-100 dark:bg-gray-900" style={{ backgroundImage: 'url(/bg.svg)', backgroundSize: 'cover' }}>
             <nav className="border-b border-gray-100 bg-white dark:border-gray-700 dark:bg-gray-800">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex h-16 justify-between">
@@ -31,10 +47,50 @@ export default function AuthenticatedLayout({ header, children }) {
                                     Dashboard
                                 </NavLink>
                             </div>
+                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                <NavLink
+                                    href={route('home')}
+                                    active={route().current('home')}
+                                >
+                                    Home
+                                </NavLink>
+                            </div>
+                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                <NavLink
+                                    href={route('programmes.index')}
+                                    active={route().current('programmes.index')}
+                                >
+                                    Programme
+                                </NavLink>
+                            </div>
                         </div>
 
                         <div className="hidden sm:ms-6 sm:flex sm:items-center">
+                            {/* Dark Mode Toggle */}
+                            <div
+                                onClick={() => setIsDarkMode((prev) => !prev)}
+                                className={`flex h-[35px] w-[70px] rounded-[50px] bg-zinc-100 p-[3px] mr-5 shadow-inner hover:cursor-pointer dark:bg-zinc-700 ${isDarkMode && 'place-content-end'}`}
+                            >
+                                <motion.div
+                                    className="flex h-[28px] w-[28px] items-center justify-center rounded-full bg-black/90"
+                                    layout
+                                    transition={spring}
+                                >
+                                    <motion.div whileTap={{ rotate: 360 }}>
+                                        {isDarkMode ? (
+                                            <FaSun className="h-5 w-5 text-yellow-300" />
+                                        ) : (
+                                            <FaMoon className="h-5 w-5 text-slate-200" />
+                                        )}
+                                    </motion.div>
+                                </motion.div>
+                            </div>
+
+                            <span className="inline-flex rounded-md font-bold text-gray-700 dark:text-gray-300">
+                                Score : {score} </span>
+
                             <div className="relative ms-3">
+
                                 <Dropdown>
                                     <Dropdown.Trigger>
                                         <span className="inline-flex rounded-md">

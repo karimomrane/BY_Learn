@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User_progress;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -33,6 +34,7 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
+                'score'=> User_progress::where('user_id', $request->user()?->id)->sum('score')
             ],
         ];
     }
