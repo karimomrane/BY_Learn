@@ -6,6 +6,7 @@ import '../styles.css';
 
 export default function Program() {
     const { program, userprogress } = usePage().props;
+    console.log(program);
 
     // State for storing all answers keyed by question id.
     const [answers, setAnswers] = useState({});
@@ -19,8 +20,10 @@ export default function Program() {
     const [scorePercentage, setScorePercentage] = useState(0);
     // (Optional) State to store the raw score.
     const [score, setScore] = useState(0);
-    // NEW: State for the current question index (starting at 0).
+    // State for the current question index (starting at 0).
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+    // State to store correct and incorrect answers after submission.
+    const [results, setResults] = useState({});
 
     // Initialize form data using useForm.
     const { data, setData } = useForm({
@@ -60,23 +63,30 @@ export default function Program() {
     const handleSubmit = (e) => {
         if (e) e.preventDefault();
 
-        // Calculate the score based on selected answers.
+        // Calculate the score and store correct/incorrect answers.
         let calculatedScore = 0;
-        selectedLesson.quizze.questions.forEach((question) => {
+        const results = {};
+        selectedLesson.quizze?.questions.forEach((question) => {
             const selectedAnswer = answers[question.id];
             const correctAnswer = question.answers.find(
                 (answer) => answer.is_correct === 1
             )?.id;
+            results[question.id] = {
+                selectedAnswer,
+                correctAnswer,
+                isCorrect: selectedAnswer === correctAnswer,
+            };
             if (selectedAnswer === correctAnswer) {
                 calculatedScore += 10;
             }
         });
 
         // Calculate the percentage score.
-        const totalQuestions = selectedLesson.quizze.questions.length;
+        const totalQuestions = selectedLesson.quizze?.questions.length;
         const percentage = ((calculatedScore / (totalQuestions * 10)) * 100).toFixed(2);
         setScorePercentage(percentage);
         setScore(calculatedScore);
+        setResults(results); // Store results for display.
 
         // Update data using setData with the calculated score and selected lesson.
         setData({
@@ -109,10 +119,13 @@ export default function Program() {
     // When opening a lesson modal, reset quiz state.
     const openModal = (lesson) => {
         setSelectedLesson(lesson);
+        console.log("Selected Lesson:", selectedLesson);
+
         setShowModal(true);
         setShowScore(false); // Reset score display when opening the modal.
         setAnswers({}); // Clear previous answers.
         setCurrentQuestionIndex(0); // Start at the first question.
+        setResults({}); // Clear previous results.
     };
 
     const closeModal = () => {
@@ -225,7 +238,7 @@ export default function Program() {
                                 <div>
                                     {/* Display one question at a time with animation */}
                                     <AnimatePresence exitBeforeEnter>
-                                        {selectedLesson.quizze.questions && (
+                                        {selectedLesson.quizze?.questions && (
                                             <motion.div
                                                 key={selectedLesson.quizze.questions[currentQuestionIndex].id}
                                                 variants={questionVariants}
@@ -293,13 +306,13 @@ export default function Program() {
                                                 Previous
                                             </button>
                                         )}
-                                        {currentQuestionIndex < selectedLesson.quizze.questions.length - 1 ? (
+                                        {currentQuestionIndex < selectedLesson.quizze?.questions.length - 1 ? (
                                             <button
                                                 type="button"
                                                 onClick={handleNext}
                                                 disabled={
                                                     !answers[
-                                                    selectedLesson.quizze.questions[currentQuestionIndex].id
+                                                    selectedLesson.quizze?.questions[currentQuestionIndex].id
                                                     ]
                                                 }
                                                 className="bg-blue-600 dark:bg-blue-700 text-white px-6 py-2 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-800 transition-colors duration-300 disabled:opacity-50"
@@ -312,7 +325,7 @@ export default function Program() {
                                                 onClick={handleSubmit}
                                                 disabled={
                                                     !answers[
-                                                    selectedLesson.quizze.questions[currentQuestionIndex].id
+                                                    selectedLesson.quizze?.questions[currentQuestionIndex].id
                                                     ]
                                                 }
                                                 className="bg-green-600 dark:bg-green-700 text-white px-6 py-2 rounded-lg hover:bg-green-700 dark:hover:bg-green-800 transition-colors duration-300 disabled:opacity-50"
@@ -334,11 +347,53 @@ export default function Program() {
                                     <p className="text-xl mb-4 text-gray-800 dark:text-white">
                                         Your Score:{" "}
                                         <span className="font-bold">
-                                            {score}/{selectedLesson.quizze.questions.length * 10}
+                                            {score}/{selectedLesson.quizze?.questions.length * 10}
                                         </span>
                                         <br />
                                         <span className="text-2xl font-bold">{scorePercentage}%</span>
                                     </p>
+
+                                    {/* Display all answers with correct/incorrect highlights */}
+                                    <div className="mt-8 text-left">
+                                        {selectedLesson.quizze?.questions.map((question) => {
+                                            const result = results[question.id];
+                                            const correctAnswer = question.answers.find(
+                                                (answer) => answer.is_correct === 1
+                                            );
+                                            return (
+                                                <div key={question.id} className="mb-6">
+                                                    <p className="font-semibold text-lg mb-2 text-gray-800 dark:text-white">
+                                                        {question.question_text}
+                                                    </p>
+                                                    <ul className="space-y-2">
+                                                        {question.answers.map((answer) => {
+                                                            const isSelected = result?.selectedAnswer === answer.id;
+                                                            const isCorrect = answer.id === correctAnswer.id;
+                                                            return (
+                                                                <li
+                                                                    key={answer.id}
+                                                                    className={`p-3 rounded-lg ${isCorrect
+                                                                            ? "bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-100"
+                                                                            : isSelected
+                                                                                ? "bg-red-100 dark:bg-red-800 text-red-800 dark:text-red-100"
+                                                                                : "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                                                                        }`}
+                                                                >
+                                                                    {answer.answer_text}
+                                                                    {isCorrect && (
+                                                                        <span className="ml-2 text-sm font-semibold">
+                                                                            (Correct Answer)
+                                                                        </span>
+                                                                    )}
+                                                                </li>
+                                                            );
+                                                        })}
+                                                    </ul>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+
                                     <button
                                         onClick={closeModal}
                                         className="mt-6 bg-blue-600 dark:bg-blue-700 text-white py-3 px-6 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-800 transition-colors duration-300 text-lg"

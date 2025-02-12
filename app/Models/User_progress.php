@@ -22,4 +22,14 @@ class User_progress extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function lesson()
+    {
+        return $this->belongsTo(Lesson::class);
+    }
+
+    public function quizze()
+    {
+        return $this->belongsTo(Quizze::class, 'quiz_id');
+    }
 }

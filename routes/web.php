@@ -26,9 +26,8 @@ Route::get('/home', function () {
     return Inertia::render('Home')->with('programs', $programs);
 })->middleware(['auth', 'verified'])->name('home');
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [UserProgressController::class, 'dashboard'])->middleware(['auth', 'verified'])->name('dashboard');
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -53,8 +52,10 @@ Route::middleware('auth')->group(function () {
         Route::resource('answers', AnswerController::class);
     });
 
+    Route::get('/historique', [UserProgressController::class, 'index'])->name('user-progress.index');
     Route::get('/user/programmes/{programme}', [UserProgressController::class, 'show'])->name('programs.show');
     Route::post('/user/programmes/submit', [UserProgressController::class, 'store'])->name('user-progress.store');
+    Route::delete('/historique/{id}', [UserProgressController::class, 'destroy'])->name('user-progress.destroy');
 });
 
 require __DIR__ . '/auth.php';

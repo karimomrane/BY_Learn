@@ -63,6 +63,14 @@ export default function AuthenticatedLayout({ header, children }) {
                                     Programme
                                 </NavLink>
                             </div>
+                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                <NavLink
+                                    href={route('user-progress.index')}
+                                    active={route().current('user-progress.index')}
+                                >
+                                    Historique
+                                </NavLink>
+                            </div>
                         </div>
 
                         <div className="hidden sm:ms-6 sm:flex sm:items-center">

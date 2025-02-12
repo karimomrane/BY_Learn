@@ -2,15 +2,54 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Lesson;
 use App\Models\Program;
 use App\Models\Programme;
+use App\Models\Question;
+use App\Models\User;
 use App\Models\User_progress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class UserProgressController extends Controller
 {
+    public function index()
+    {
+        $userprogress = User_progress::with('lesson', 'quizze', 'user')->get();
+
+        return Inertia::render('Historique', [
+            'userprogress' => $userprogress
+        ]);
+    }
+
+    public function dashboard()
+    {
+        $totalusers = User::count();
+        $useractif = User_progress::select('user_id')->distinct()->count();
+        $programmes = Programme::count();
+        $lessons = Lesson::count();
+        $tentatives = User_progress::count();
+        $pointsemis = User_progress::sum('score');
+        $totalpoints = Question::count() * 10;
+        $lasttentatives = User_progress::with('user')->latest()->get();
+        $classementbyuser = User_progress::with('user')->selectRaw('user_id, sum(score) as total_score')
+            ->groupBy('user_id')
+            ->orderByDesc('total_score')
+            ->get();
+        return Inertia::render('Dashboard', [
+            'totalusers' => $totalusers,
+            'useractif' => $useractif,
+            'programmes' => $programmes,
+            'lessons' => $lessons,
+            'tentatives' => $tentatives,
+            'pointsemis' => $pointsemis,
+            'totalpoints' => $totalpoints,
+            'lasttentatives' => $lasttentatives,
+            'classementbyuser' => $classementbyuser
+        ]);
+    }
     /**
      * Show the program details with its lessons and questions.
      */
@@ -48,12 +87,13 @@ class UserProgressController extends Controller
         // Return to the program page with a success message
         $userprogress = User_progress::where('user_id', Auth::id())->get();
 
-        return Inertia::render('UserProgress/Program', [
-            'message' => 'Progress saved successfully.',
-            'userprogress' => $userprogress,
-            'program' => Programme::with([
-                'lessons.quizze.questions.answers' // Include updated program data
-            ])->findOrFail($request->program_id)
-        ]);
+        return redirect()->back();
+    }
+
+    public function destroy($id)
+    {
+        $progress = User_progress::findOrFail($id);
+        $progress->delete();
+        return redirect()->back();
     }
 }
