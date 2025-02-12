@@ -27,13 +27,13 @@ class UserProgressController extends Controller
     public function dashboard()
     {
         $totalusers = User::count();
-        $useractif = User_progress::select('user_id')->distinct()->count();
+        $useractif = User::has('user_progress')->count();
         $programmes = Programme::count();
         $lessons = Lesson::count();
         $tentatives = User_progress::count();
         $pointsemis = User_progress::sum('score');
         $totalpoints = Question::count() * 10;
-        $lasttentatives = User_progress::with('user')->latest()->get();
+        $lasttentatives = User_progress::with('user')->latest()->take(5)->get();
         $classementbyuser = User_progress::with('user')->selectRaw('user_id, sum(score) as total_score')
             ->groupBy('user_id')
             ->orderByDesc('total_score')

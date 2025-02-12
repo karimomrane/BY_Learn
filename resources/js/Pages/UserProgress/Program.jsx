@@ -155,7 +155,7 @@ export default function Program() {
                     <img
                         src={"/storage/" + program.image_path}
                         alt="Program Cover"
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover rounded-3xl"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80"></div>
                     <h2 className="absolute bottom-4 left-4 text-white text-3xl font-bold">

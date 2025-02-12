@@ -1,10 +1,18 @@
 import React, { useState } from 'react';
-import { Link } from '@inertiajs/react';
+import { Link, useForm } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { FaEdit, FaTimes } from 'react-icons/fa';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
 export default function Index({ programme, lessons }) {
     const [selectedVideo, setSelectedVideo] = useState(null);
+    const { delete: destroy } = useForm();
+
+    const handleDelete = (id, programmeId) => {
+        if (confirm('Are you sure you want to delete this lesson?')) {
+            destroy(route('lessons.destroy', [programmeId,id]));
+        }
+    };
 
     return (
         <AuthenticatedLayout
@@ -26,7 +34,23 @@ export default function Index({ programme, lessons }) {
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
                         {lessons.map(lesson => (
-                            <div key={lesson.id} className="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden">
+                            <div key={lesson.id} className="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden relative">
+                                {/* Edit Button */}
+                                <Link
+                                    href={route('lessons.edit', [programme.id,lesson.id])}
+                                    className="absolute top-2 left-2 text-blue-600 hover:text-blue-800 bg-white rounded-full p-2 dark:bg-indigo-900"
+                                >
+                                    <FaEdit size={20} />
+                                </Link>
+
+                                {/* Delete Button */}
+                                <button
+                                    onClick={() => handleDelete(lesson.id, programme.id)}
+                                    className="absolute top-2 right-2 text-red-600 hover:text-red-800 bg-white rounded-full p-2 dark:bg-red-900"
+                                >
+                                    <FaTimes size={20} />
+                                </button>
+
                                 {lesson.image_path && (
                                     <img
                                         src={`/storage/${lesson.image_path}`}
@@ -77,7 +101,6 @@ export default function Index({ programme, lessons }) {
                             exit={{ opacity: 0, y: 50 }}
                             transition={{ type: 'spring', stiffness: 100 }}
                         >
-
                             {/* Video Player */}
                             <div className="flex justify-center">
                                 <video

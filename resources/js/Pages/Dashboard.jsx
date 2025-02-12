@@ -81,8 +81,8 @@ export default function Dashboard({
                         </motion.div>
                     </div>
 
-{/* Classement des Utilisateurs */}
-<div className="mt-6">
+                    {/* Classement des Utilisateurs */}
+                    <div className="mt-6">
                         <motion.div className="p-6 bg-white rounded-lg shadow-md dark:bg-gray-800" variants={cardVariants} initial="hidden" animate="visible" transition={{ duration: 0.5, delay: 1.4 }}>
                             <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200">Classement des Utilisateurs</h3>
                             <div className="mt-4 overflow-x-auto">
@@ -94,7 +94,7 @@ export default function Dashboard({
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {classementbyuser.map((user, index) => (
+                                        {classementbyuser?.map((user, index) => (
                                             <tr key={index} className="border-gray-300 dark:border-gray-600">
                                                 <td className="px-6 py-3 text-gray-900 dark:text-gray-100 flex items-center">
                                                     {index === 0 && <FaStar className="text-yellow-500 text-xl mr-2" />}
@@ -124,7 +124,7 @@ export default function Dashboard({
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {lasttentatives.map((attempt, index) => (
+                                        {lasttentatives?.map((attempt, index) => (
                                             <tr key={index} className="border-gray-300 dark:border-gray-600">
                                                 <td className="px-6 py-3 text-gray-900 dark:text-gray-100">{attempt.user.name}</td>
                                                 <td className="px-6 py-3 text-gray-900 dark:text-gray-100">{attempt.score}</td>

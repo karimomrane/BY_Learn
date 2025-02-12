@@ -111,7 +111,7 @@ export default function Index({ programmes: initialProgrammes }) {
                 onClick={() => paginate(i + 1)}
                 className={`mx-2 px-4 py-2 rounded-full font-medium transition-colors ${
                   currentPage === i + 1
-                    ? 'bg-blue-500 text-white'
+                    ? 'bg-green-700 text-white'
                     : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
                 }`}
               >
