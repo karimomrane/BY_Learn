@@ -3,7 +3,7 @@ import { useForm } from "@inertiajs/react";
 import { motion } from "framer-motion";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { usePage } from "@inertiajs/react";
-
+import '../styles.css';
 export default function Index() {
     const { question, answers } = usePage().props;
     const [deleteConfirmation, setDeleteConfirmation] = useState(null);
@@ -80,21 +80,21 @@ export default function Index() {
                                     name="answer_text"
                                     value={createData.answer_text}
                                     onChange={(e) => setCreateData("answer_text", e.target.value)}
-                                    className="w-full p-2 border border-gray-300 rounded-md"
+                                    className="w-full p-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
                                     placeholder="Enter answer text"
                                 />
                                 {createErrors.answer_text && <div className="text-red-500 text-sm">{createErrors.answer_text}</div>}
                             </div>
                             <div className="mt-2">
-                                <label className="flex items-center space-x-2">
-                                    <input
-                                        type="checkbox"
+                                <label class="switch flex items-center m-3">
+                                    <input type="checkbox"
                                         name="is_correct"
                                         checked={createData.is_correct}
-                                        onChange={(e) => setCreateData("is_correct", e.target.checked)}
-                                    />
-                                    <span>Mark as correct</span>
+                                        onChange={(e) => setCreateData("is_correct", e.target.checked)} />
+                                    <span class="slider"></span>
+
                                 </label>
+                                <span className="dark:text-gray-200">Mark as correct</span>
                             </div>
                             <button
                                 type="submit"
@@ -162,7 +162,7 @@ export default function Index() {
                         exit={{ scale: 0.8 }}
                         className="bg-white dark:bg-gray-800 p-8 rounded-lg w-96"
                     >
-                        <h3 className="text-xl font-semibold mb-4">Edit Answer</h3>
+                        <h3 className="text-xl font-semibold mb-4 dark:text-gray-200">Edit Answer</h3>
                         <form onSubmit={(e) => handleEdit(e, selectedAnswer.id)}>
                             <input
                                 type="text"
@@ -173,15 +173,16 @@ export default function Index() {
                             />
                             {editErrors.answer_text && <div className="text-red-500 text-sm">{editErrors.answer_text}</div>}
                             <div className="mt-2">
-                                <label className="flex items-center space-x-2">
+                                <label className="flex items-center switch m-3">
                                     <input
                                         type="checkbox"
                                         name="is_correct"
                                         checked={editData.is_correct}
                                         onChange={(e) => setEditData("is_correct", e.target.checked)}
                                     />
-                                    <span>Mark as correct</span>
+                                    <span className="slider"></span>
                                 </label>
+                                <span className="dark:text-gray-200">Mark as correct</span>
                             </div>
                             <div className="mt-4 flex justify-between">
                                 <button

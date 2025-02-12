@@ -3,7 +3,6 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Link, useForm } from '@inertiajs/react';
 import { MdCancel } from 'react-icons/md';
 import { motion } from 'framer-motion';
-
 export default function Index({ programmes: initialProgrammes }) {
   const { delete: destroy } = useForm();
   const [searchTerm, setSearchTerm] = useState('');
@@ -35,7 +34,7 @@ export default function Index({ programmes: initialProgrammes }) {
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
           <Link
             href={route('programmes.create')}
-            className="text-2xl font-bold text-gray-800 dark:text-gray-200 hover:underline transition-colors"
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
           >
             Ajouter un programme
           </Link>
@@ -49,7 +48,7 @@ export default function Index({ programmes: initialProgrammes }) {
         </div>
       }
     >
-      <div className="py-12 bg-gray-50 dark:bg-gray-900 min-h-screen">
+      <div className="py-12  dark:bg-gray-900">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {currentProgrammes.map((programme) => (

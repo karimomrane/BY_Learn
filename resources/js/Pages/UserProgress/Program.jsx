@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { router, useForm, usePage } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { motion, AnimatePresence } from "framer-motion";
+import '../styles.css';
 
 export default function Program() {
     const { program, userprogress } = usePage().props;
@@ -204,7 +205,7 @@ export default function Program() {
                         exit={{ opacity: 0 }}
                     >
                         <motion.div
-                            className="bg-white dark:bg-gray-800 p-8 rounded-lg max-w-4xl w-full h-[600px] overflow-auto relative"
+                            className="bg-white dark:bg-gray-800 p-8 rounded-lg max-w-4xl w-full h-[600px] overflow-auto custom-scrollbar relative"
                             variants={modalVariants}
                             initial="hidden"
                             animate="visible"
@@ -232,15 +233,19 @@ export default function Program() {
                                                 animate="animate"
                                                 exit="exit"
                                             >
-                                                <p className="font-semibold text-lg mb-3 text-gray-800 dark:text-white">
+                                                <p className="font-semibold text-lg mb-6 text-gray-800 dark:text-white">
                                                     {selectedLesson.quizze.questions[currentQuestionIndex].question_text}
                                                 </p>
-                                                <ul className="space-y-3">
+                                                <ul className="grid grid-cols-2 gap-4">
                                                     {selectedLesson.quizze.questions[
                                                         currentQuestionIndex
                                                     ].answers.map((answer) => (
-                                                        <li key={answer.id}>
-                                                            <label className="flex items-center space-x-3">
+                                                        <motion.li
+                                                            key={answer.id}
+                                                            whileHover={{ scale: 1.05 }}
+                                                            whileTap={{ scale: 0.95 }}
+                                                        >
+                                                            <label className="block">
                                                                 <input
                                                                     type="radio"
                                                                     name={`question_${selectedLesson.quizze.questions[currentQuestionIndex].id}`}
@@ -256,11 +261,21 @@ export default function Program() {
                                                                             answer.id
                                                                         )
                                                                     }
-                                                                    className="form-radio h-5 w-5 text-blue-600 dark:text-blue-400"
+                                                                    className="hidden"
                                                                 />
-                                                                <span className="text-gray-700 dark:text-gray-300">{answer.answer_text}</span>
+                                                                <motion.div
+                                                                    className={`p-4 rounded-lg cursor-pointer text-center transition-colors duration-300 ${answers[selectedLesson.quizze.questions[currentQuestionIndex].id] === answer.id
+                                                                            ? "bg-blue-600 text-white shadow-lg"
+                                                                            : "bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600"
+                                                                        }`}
+                                                                    initial={{ opacity: 0, y: 20 }}
+                                                                    animate={{ opacity: 1, y: 0 }}
+                                                                    exit={{ opacity: 0, y: -20 }}
+                                                                >
+                                                                    {answer.answer_text}
+                                                                </motion.div>
                                                             </label>
-                                                        </li>
+                                                        </motion.li>
                                                     ))}
                                                 </ul>
                                             </motion.div>
@@ -268,12 +283,12 @@ export default function Program() {
                                     </AnimatePresence>
 
                                     {/* Navigation Buttons */}
-                                    <div className="flex justify-between mt-6">
+                                    <div className="flex justify-between mt-8">
                                         {currentQuestionIndex > 0 && (
                                             <button
                                                 type="button"
                                                 onClick={handleBack}
-                                                className="bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-white px-4 py-2 rounded hover:bg-gray-400 dark:hover:bg-gray-600"
+                                                className="bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-white px-6 py-2 rounded-lg hover:bg-gray-400 dark:hover:bg-gray-600 transition-colors duration-300"
                                             >
                                                 Previous
                                             </button>
@@ -287,7 +302,7 @@ export default function Program() {
                                                     selectedLesson.quizze.questions[currentQuestionIndex].id
                                                     ]
                                                 }
-                                                className="bg-blue-600 dark:bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-700 dark:hover:bg-blue-800 disabled:opacity-50"
+                                                className="bg-blue-600 dark:bg-blue-700 text-white px-6 py-2 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-800 transition-colors duration-300 disabled:opacity-50"
                                             >
                                                 Next
                                             </button>
@@ -300,7 +315,7 @@ export default function Program() {
                                                     selectedLesson.quizze.questions[currentQuestionIndex].id
                                                     ]
                                                 }
-                                                className="bg-green-600 dark:bg-green-700 text-white px-4 py-2 rounded hover:bg-green-700 dark:hover:bg-green-800 disabled:opacity-50"
+                                                className="bg-green-600 dark:bg-green-700 text-white px-6 py-2 rounded-lg hover:bg-green-700 dark:hover:bg-green-800 transition-colors duration-300 disabled:opacity-50"
                                             >
                                                 Submit Answers
                                             </button>
