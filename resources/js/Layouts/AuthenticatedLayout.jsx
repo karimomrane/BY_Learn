@@ -95,6 +95,7 @@ export default function AuthenticatedLayout({ header, children }) {
                             </div>
 
                             <span className="inline-flex rounded-md font-bold text-gray-700 dark:text-gray-300">
+
                                 Score : {score} </span>
 
                             <div className="relative ms-3">
@@ -143,6 +144,30 @@ export default function AuthenticatedLayout({ header, children }) {
                         </div>
 
                         <div className="-me-2 flex items-center sm:hidden">
+                            <span className="inline-flex rounded-md font-bold text-gray-700 dark:text-gray-300 mx-16">
+
+                                Score : {score}
+                            </span>
+                            {/* Dark Mode Toggle */}
+                            <div
+                                onClick={() => setIsDarkMode((prev) => !prev)}
+                                className={`flex h-[35px] w-[70px] rounded-[50px] bg-zinc-100 p-[3px] mr-5 shadow-inner hover:cursor-pointer dark:bg-zinc-700 ${isDarkMode && 'place-content-end'}`}
+                            >
+                                <motion.div
+                                    className="flex h-[28px] w-[28px] items-center justify-center rounded-full bg-black/90"
+                                    layout
+                                    transition={spring}
+                                >
+                                    <motion.div whileTap={{ rotate: 360 }}>
+                                        {isDarkMode ? (
+                                            <FaSun className="h-5 w-5 text-yellow-300" />
+                                        ) : (
+                                            <FaMoon className="h-5 w-5 text-slate-200" />
+                                        )}
+                                    </motion.div>
+                                </motion.div>
+                            </div>
+
                             <button
                                 onClick={() =>
                                     setShowingNavigationDropdown(
@@ -191,12 +216,32 @@ export default function AuthenticatedLayout({ header, children }) {
                         ' sm:hidden'
                     }
                 >
+
                     <div className="space-y-1 pb-3 pt-2">
+
                         <ResponsiveNavLink
                             href={route('dashboard')}
                             active={route().current('dashboard')}
                         >
                             Dashboard
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            href={route('home')}
+                            active={route().current('home')}
+                        >
+                            Home
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            href={route('programmes.index')}
+                            active={route().current('programmes.index')}
+                        >
+                            Programme
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            href={route('user-progress.index')}
+                            active={route().current('user-progress.index')}
+                        >
+                            Historique
                         </ResponsiveNavLink>
                     </div>
 
@@ -208,6 +253,7 @@ export default function AuthenticatedLayout({ header, children }) {
                             <div className="text-sm font-medium text-gray-500">
                                 {user.email}
                             </div>
+
                         </div>
 
                         <div className="mt-3 space-y-1">

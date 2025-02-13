@@ -33,7 +33,7 @@ class UserProgressController extends Controller
         $tentatives = User_progress::count();
         $pointsemis = User_progress::sum('score');
         $totalpoints = Question::count() * 10;
-        $lasttentatives = User_progress::with('user')->latest()->take(5)->get();
+        $lasttentatives = User_progress::with('user','quizze')->latest()->take(5)->get();
         $classementbyuser = User_progress::with('user')->selectRaw('user_id, sum(score) as total_score')
             ->groupBy('user_id')
             ->orderByDesc('total_score')

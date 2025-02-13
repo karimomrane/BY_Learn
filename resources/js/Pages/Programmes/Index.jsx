@@ -7,7 +7,7 @@ export default function Index({ programmes: initialProgrammes }) {
   const { delete: destroy } = useForm();
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const programmesPerPage = 6;
+  const programmesPerPage = 3;
 
   // Filter programmes based on search term
   const filteredProgrammes = initialProgrammes.filter((programme) =>

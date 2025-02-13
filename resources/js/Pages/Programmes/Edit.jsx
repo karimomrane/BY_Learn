@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { router, useForm } from '@inertiajs/react';
+import { Link, router, useForm } from '@inertiajs/react';
+import { useDropzone } from 'react-dropzone';
 
 export default function Edit({ programme }) {
-    const { data, setData, errors } = useForm({
+    const { data, setData, errors,processing } = useForm({
         title: programme.title,
         description: programme.description,
         image_path: null,
@@ -27,69 +28,81 @@ export default function Edit({ programme }) {
         });
     };
 
+    const [preview, setPreview] = useState(programme.image_path ? `/storage/${programme.image_path}` : null);
+
+    const handleDrop = (acceptedFiles) => {
+        const file = acceptedFiles[0];
+        setData('image_path', file);
+        setPreview(URL.createObjectURL(file));
+    };
+
+    const { getRootProps, getInputProps } = useDropzone({
+        onDrop: handleDrop,
+        accept: 'image/*',
+        multiple: false
+    });
+
     return (
         <AuthenticatedLayout
-            header={<h2 className="text-xl font-semibold">Modifier Programme</h2>}
+            header={<h2 className="text-xl font-semibold dark:text-white">Modifier Programme</h2>}
         >
             <div className="py-12">
-                <div className="max-w-4xl mx-auto bg-white p-6 shadow-md rounded-lg">
-                    <form onSubmit={handleSubmit} encType="multipart/form-data">
-                        {/* Title */}
-                        <div className="mb-4">
-                            <label className="block text-gray-700">Titre</label>
-                            <input
-                                type="text"
-                                value={data.title}
-                                onChange={(e) => setData('title', e.target.value)}
-                                className="w-full border-gray-300 rounded-md p-2"
-                            />
-                            {errors.title && (
-                                <p className="text-red-500 text-sm mt-1">{errors.title}</p>
-                            )}
-                        </div>
-
-                        {/* Description */}
-                        <div className="mb-4">
-                            <label className="block text-gray-700">Description</label>
-                            <textarea
-                                value={data.description}
-                                onChange={(e) => setData('description', e.target.value)}
-                                className="w-full border-gray-300 rounded-md p-2"
-                            ></textarea>
-                            {errors.description && (
-                                <p className="text-red-500 text-sm mt-1">{errors.description}</p>
-                            )}
-                        </div>
-
-                        {/* Image Upload */}
-                        <div className="mb-4">
-                            <label className="block text-gray-700">Image</label>
-                            {programme.image_path && (
-                                <img
-                                    src={`/storage/${programme.image_path}`}
-                                    alt="Current"
-                                    className="w-32 h-32 object-cover rounded mb-2"
+                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                    <div className="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6">
+                        <form onSubmit={handleSubmit} encType="multipart/form-data">
+                            {/* Title Field */}
+                            <div className="mb-4">
+                                <label className="block text-gray-700 dark:text-gray-200 font-bold mb-2">Titre</label>
+                                <input
+                                    type="text"
+                                    value={data.title}
+                                    onChange={(e) => setData('title', e.target.value)}
+                                    className="shadow rounded w-full py-2 px-3 text-gray-700 dark:text-white dark:bg-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                 />
-                            )}
-                            <input
-                                type="file"
-                                onChange={(e) => setData("image_path", e.target.files[0])}
-                                className="mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
-                                accept="image/*"
-                            />
-                            {errors.image && (
-                                <p className="text-red-500 text-sm mt-1">{errors.image}</p>
-                            )}
-                        </div>
+                                {errors.title && <div className="text-red-500 text-sm mt-1">{errors.title}</div>}
+                            </div>
 
-                        {/* Submit Button */}
-                        <button
-                            type="submit"
-                            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
-                        >
-                            Modifier
-                        </button>
-                    </form>
+                            {/* Description Field */}
+                            <div className="mb-4">
+                                <label className="block text-gray-700 dark:text-gray-200 font-bold mb-2">Description</label>
+                                <textarea
+                                    value={data.description}
+                                    onChange={(e) => setData('description', e.target.value)}
+                                    className="shadow rounded w-full py-2 px-3 text-gray-700 dark:text-white dark:bg-gray-700  leading-tight focus:outline-none focus:shadow-outline"
+                                    rows="4"
+                                ></textarea>
+                                {errors.description && <div className="text-red-500 text-sm mt-1">{errors.description}</div>}
+                            </div>
+
+                            {/* Drag and Drop File Upload */}
+                            <div {...getRootProps()} className="mb-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 flex flex-col items-center cursor-pointer">
+                                <input {...getInputProps()} />
+                                {preview ? (
+                                    <img src={preview} alt="Preview" className="w-full h-48 object-cover rounded-lg" />
+                                ) : (
+                                    <p className="text-gray-500 dark:text-gray-400">Glissez-déposez une image ici ou cliquez pour sélectionner</p>
+                                )}
+                            </div>
+                            {errors.image_path && <div className="text-red-500 text-sm mt-1">{errors.image_path}</div>}
+
+                            {/* Form Actions */}
+                            <div className="flex items-center justify-between">
+                                <button
+                                    type="submit"
+                                    disabled={processing}
+                                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                >
+                                    Modifier
+                                </button>
+                                <Link
+                                    href={route('programmes.index')}
+                                    className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
+                                >
+                                    Retour
+                                </Link>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </AuthenticatedLayout>

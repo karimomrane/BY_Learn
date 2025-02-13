@@ -14,7 +14,7 @@ export default function Dashboard({
     lasttentatives,
     classementbyuser
 }) {
-    console.log(classementbyuser);
+    console.log(lasttentatives);
 
     const cardVariants = {
         hidden: { opacity: 0, y: 20 },
@@ -119,6 +119,7 @@ export default function Dashboard({
                                     <thead>
                                         <tr className="bg-gray-100 dark:bg-gray-700">
                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Utilisateur</th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quize</th>
                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Score</th>
                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
                                         </tr>
@@ -127,6 +128,7 @@ export default function Dashboard({
                                         {lasttentatives?.map((attempt, index) => (
                                             <tr key={index} className="border-gray-300 dark:border-gray-600">
                                                 <td className="px-6 py-3 text-gray-900 dark:text-gray-100">{attempt.user.name}</td>
+                                                <td className="px-6 py-3 text-gray-900 dark:text-gray-100">{attempt.quizze?.instructions}</td>
                                                 <td className="px-6 py-3 text-gray-900 dark:text-gray-100">{attempt.score}</td>
                                                 <td className="px-6 py-3 text-gray-900 dark:text-gray-100">
                                                     {new Intl.DateTimeFormat('fr-FR', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }).format(new Date(attempt.created_at))}

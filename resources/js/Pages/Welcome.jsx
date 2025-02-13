@@ -1,7 +1,27 @@
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import { Head, Link } from '@inertiajs/react';
+import { motion, spring } from 'framer-motion';
+import Svg1 from './svg1';
+import Svg2 from './Svg2';
+import Svg3 from './Svg3';
+import { useEffect, useState } from 'react';
+import { FaMoon, FaSun } from 'react-icons/fa';
 
-export default function Welcome({ auth, laravelVersion, phpVersion }) {
+export default function Welcome({ auth }) {
+    const [isDarkMode, setIsDarkMode] = useState(() => {
+        return localStorage.getItem('theme') === 'dark' || false;
+    });
+
+    useEffect(() => {
+        if (isDarkMode) {
+            document.body.classList.add('dark');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.body.classList.remove('dark');
+            localStorage.setItem('theme', 'light');
+        }
+    }, [isDarkMode]);
+
     const handleImageError = () => {
         document
             .getElementById('screenshot-container')
@@ -13,10 +33,32 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
         document.getElementById('background')?.classList.add('!hidden');
     };
 
+    // Animation variants for Framer Motion
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.2,
+            },
+        },
+    };
+
+    const itemVariants = {
+        hidden: { y: 20, opacity: 0 },
+        visible: {
+            y: 0,
+            opacity: 1,
+            transition: {
+                duration: 0.5,
+            },
+        },
+    };
+
     return (
         <>
-            <Head title="Welcome" />
-            <div className="bg-gray-50 text-black/50 dark:bg-black dark:text-white/50">
+            <Head title="Welcome to LMS" />
+            <div className="bg-gradient-to-br from-blue-50 to-purple-50 text-black/50 dark:bg-gradient-to-br dark:from-gray-900 dark:to-black dark:text-white/50">
                 <img
                     id="background"
                     className="absolute -left-20 top-0 max-w-[877px]"
@@ -24,11 +66,41 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                 />
                 <div className="relative flex min-h-screen flex-col items-center justify-center selection:bg-[#7EBA27] selection:text-white">
                     <div className="relative w-full max-w-2xl px-6 lg:max-w-7xl">
-                        <header className="grid grid-cols-2 items-center gap-2 py-10 lg:grid-cols-3">
-                            <div className="flex lg:col-start-2 lg:justify-center">
-                               <ApplicationLogo className="h-20 w-20 fill-current text-gray-500" />
-                            </div>
-                            <nav className="-mx-3 flex flex-1 justify-end">
+                        <motion.header
+                            className="grid grid-cols-2 items-center gap-2 py-10 lg:grid-cols-3"
+                            variants={containerVariants}
+                            initial="hidden"
+                            animate="visible"
+                        >
+                            <motion.div
+                                className="flex lg:col-start-2 lg:justify-center"
+                                variants={itemVariants}
+                            >
+                                <ApplicationLogo className="h-20 w-20 fill-current text-gray-500" />
+                            </motion.div>
+                            <motion.nav
+                                className="-mx-3 flex flex-1 justify-end"
+                                variants={itemVariants}
+                            >
+                                {/* Dark Mode Toggle */}
+                                <div
+                                    onClick={() => setIsDarkMode((prev) => !prev)}
+                                    className={`flex h-[35px] w-[70px] rounded-[50px] bg-zinc-100 p-[3px] mr-5 shadow-inner hover:cursor-pointer dark:bg-zinc-700 ${isDarkMode && 'place-content-end'}`}
+                                >
+                                    <motion.div
+                                        className="flex h-[28px] w-[28px] items-center justify-center rounded-full bg-black/90"
+                                        layout
+                                        transition={spring}
+                                    >
+                                        <motion.div whileTap={{ rotate: 360 }}>
+                                            {isDarkMode ? (
+                                                <FaSun className="h-5 w-5 text-yellow-300" />
+                                            ) : (
+                                                <FaMoon className="h-5 w-5 text-slate-200" />
+                                            )}
+                                        </motion.div>
+                                    </motion.div>
+                                </div>
                                 {auth.user ? (
                                     <Link
                                         href={route('dashboard')}
@@ -52,15 +124,21 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                         </Link>
                                     </>
                                 )}
-                            </nav>
-                        </header>
+                            </motion.nav>
+                        </motion.header>
 
-                        <main className="mt-6">
+                        <motion.main
+                            className="mt-6"
+                            variants={containerVariants}
+                            initial="hidden"
+                            animate="visible"
+                        >
                             <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
-                                <a
+                                <motion.a
                                     href={route('login')}
                                     id="docs-card"
                                     className="flex flex-col items-start gap-6 overflow-hidden rounded-lg bg-white p-6 shadow-[0px_14px_34px_0px_rgba(0,0,0,0.08)] ring-1 ring-white/[0.05] transition duration-300 hover:text-black/70 hover:ring-black/20 focus:outline-none focus-visible:ring-[#7EBA27] md:row-span-3 lg:p-10 lg:pb-10 dark:bg-zinc-900 dark:ring-zinc-800 dark:hover:text-white/70 dark:hover:ring-zinc-700 dark:focus-visible:ring-[#7EBA27]"
+                                    variants={itemVariants}
                                 >
                                     <div
                                         id="screenshot-container"
@@ -68,13 +146,13 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                     >
                                         <img
                                             src="/welcomeslide.png"
-                                            alt="Laravel documentation screenshot"
+                                            alt="LMS dashboard screenshot"
                                             className="aspect-video h-full w-full flex-1 rounded-[10px] object-cover object-top drop-shadow-[0px_4px_34px_rgba(0,0,0,0.06)] dark:hidden"
                                             onError={handleImageError}
                                         />
                                         <img
-                                            src="https://laravel.com/assets/img/welcome/docs-dark.svg"
-                                            alt="Laravel documentation screenshot"
+                                            src="/welcomeslidedark.png"
+                                            alt="LMS dashboard screenshot"
                                             className="hidden aspect-video h-full w-full flex-1 rounded-[10px] object-cover object-top drop-shadow-[0px_4px_34px_rgba(0,0,0,0.25)] dark:block"
                                         />
                                         <div className="absolute -bottom-16 -left-16 h-40 w-[calc(100%+8rem)] bg-gradient-to-b from-transparent via-white to-white dark:via-zinc-900 dark:to-zinc-900"></div>
@@ -85,111 +163,95 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                             id="docs-card-content"
                                             className="flex items-start gap-6 lg:flex-col"
                                         >
-                                            <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-[#7EBA27]/10 sm:size-16">
-                                                <svg
-                                                    className="size-5 sm:size-6"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
-                                                >
-                                                    <path
-                                                        fill="#7EBA27"
-                                                        d="M23 4a1 1 0 0 0-1.447-.894L12.224 7.77a.5.5 0 0 1-.448 0L2.447 3.106A1 1 0 0 0 1 4v13.382a1.99 1.99 0 0 0 1.105 1.79l9.448 4.728c.14.065.293.1.447.1.154-.005.306-.04.447-.105l9.453-4.724a1.99 1.99 0 0 0 1.1-1.789V4ZM3 6.023a.25.25 0 0 1 .362-.223l7.5 3.75a.251.251 0 0 1 .138.223v11.2a.25.25 0 0 1-.362.224l-7.5-3.75a.25.25 0 0 1-.138-.22V6.023Zm18 11.2a.25.25 0 0 1-.138.224l-7.5 3.75a.249.249 0 0 1-.329-.099.249.249 0 0 1-.033-.12V9.772a.251.251 0 0 1 .138-.224l7.5-3.75a.25.25 0 0 1 .362.224v11.2Z"
-                                                    />
-                                                    <path
-                                                        fill="#7EBA27"
-                                                        d="m3.55 1.893 8 4.048a1.008 1.008 0 0 0 .9 0l8-4.048a1 1 0 0 0-.9-1.785l-7.322 3.706a.506.506 0 0 1-.452 0L4.454.108a1 1 0 0 0-.9 1.785H3.55Z"
-                                                    />
-                                                </svg>
-                                            </div>
+                                            <Svg3 />
 
                                             <div className="pt-3 sm:pt-5 lg:pt-0">
                                                 <h2 className="text-xl font-semibold text-black dark:text-white">
-                                                    Documentation
+                                                    Gestion des Cours
                                                 </h2>
 
                                                 <p className="mt-4 text-sm/relaxed">
-                                                    Laravel has wonderful
-                                                    documentation covering every
-                                                    aspect of the framework.
-                                                    Whether you are a newcomer
-                                                    or have prior experience
-                                                    with Laravel, we recommend
-                                                    reading our documentation
-                                                    from beginning to end.
-                                                </p>
+                                                    Notre LMS offre une plateforme complète pour gérer les cours, suivre les progrès et interagir avec les étudiants. Que vous soyez enseignant ou apprenant, nos outils sont conçus pour améliorer votre expérience.                                                </p>
                                             </div>
                                         </div>
 
-                                        <svg
-                                            className="size-6 shrink-0 stroke-[#7EBA27]"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            strokeWidth="1.5"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75"
-                                            />
-                                        </svg>
+                                        <Svg2 />
                                     </div>
-                                </a>
+                                </motion.a>
 
-                                <a
-                                    href="https://laracasts.com"
+                                <motion.a
+                                    href={route('home')}
                                     className="flex items-start gap-4 rounded-lg bg-white p-6 shadow-[0px_14px_34px_0px_rgba(0,0,0,0.08)] ring-1 ring-white/[0.05] transition duration-300 hover:text-black/70 hover:ring-black/20 focus:outline-none focus-visible:ring-[#7EBA27] lg:pb-10 dark:bg-zinc-900 dark:ring-zinc-800 dark:hover:text-white/70 dark:hover:ring-zinc-700 dark:focus-visible:ring-[#7EBA27]"
+                                    variants={itemVariants}
                                 >
                                     <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-[#7EBA27]/10 sm:size-16">
-                                        <svg
-                                            className="size-5 sm:size-6"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <g fill="#7EBA27">
-                                                <path d="M24 8.25a.5.5 0 0 0-.5-.5H.5a.5.5 0 0 0-.5.5v12a2.5 2.5 0 0 0 2.5 2.5h19a2.5 2.5 0 0 0 2.5-2.5v-12Zm-7.765 5.868a1.221 1.221 0 0 1 0 2.264l-6.626 2.776A1.153 1.153 0 0 1 8 18.123v-5.746a1.151 1.151 0 0 1 1.609-1.035l6.626 2.776ZM19.564 1.677a.25.25 0 0 0-.177-.427H15.6a.106.106 0 0 0-.072.03l-4.54 4.543a.25.25 0 0 0 .177.427h3.783c.027 0 .054-.01.073-.03l4.543-4.543ZM22.071 1.318a.047.047 0 0 0-.045.013l-4.492 4.492a.249.249 0 0 0 .038.385.25.25 0 0 0 .14.042h5.784a.5.5 0 0 0 .5-.5v-2a2.5 2.5 0 0 0-1.925-2.432ZM13.014 1.677a.25.25 0 0 0-.178-.427H9.101a.106.106 0 0 0-.073.03l-4.54 4.543a.25.25 0 0 0 .177.427H8.4a.106.106 0 0 0 .073-.03l4.54-4.543ZM6.513 1.677a.25.25 0 0 0-.177-.427H2.5A2.5 2.5 0 0 0 0 3.75v2a.5.5 0 0 0 .5.5h1.4a.106.106 0 0 0 .073-.03l4.54-4.543Z" />
-                                            </g>
-                                        </svg>
+                                        <Svg1 />
                                     </div>
 
                                     <div className="pt-3 sm:pt-5">
                                         <h2 className="text-xl font-semibold text-black dark:text-white">
-                                            Laracasts
+                                            Ressources d'Apprentissage
                                         </h2>
 
                                         <p className="mt-4 text-sm/relaxed">
-                                            Laracasts offers thousands of video
-                                            tutorials on Laravel, PHP, and
-                                            JavaScript development. Check them
-                                            out, see for yourself, and massively
-                                            level up your development skills in
-                                            the process.
+                                            Accédez à une vaste bibliothèque de ressources d'apprentissage, y compris des tutoriels vidéo, des quiz interactifs et des documents téléchargeables. Améliorez vos compétences et vos connaissances avec notre contenu soigneusement sélectionné.                                        </p>
+                                    </div>
+
+                                    <Svg2 />
+                                </motion.a>
+                                {/* Quiz Section */}
+                                <motion.a
+                                    href={route('home')}
+                                    className="flex items-start gap-4 rounded-lg bg-white p-6 shadow-[0px_14px_34px_0px_rgba(0,0,0,0.08)] ring-1 ring-white/[0.05] transition duration-300 hover:text-black/70 hover:ring-black/20 focus:outline-none focus-visible:ring-[#7EBA27] lg:pb-10 dark:bg-zinc-900 dark:ring-zinc-800 dark:hover:text-white/70 dark:hover:ring-zinc-700 dark:focus-visible:ring-[#7EBA27]"
+                                    variants={itemVariants}
+                                >
+                                    <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-[#7EBA27]/10 sm:size-16">
+                                    <Svg1 />
+                                    </div>
+
+                                    <div className="pt-3 sm:pt-5">
+                                        <h2 className="text-xl font-semibold text-black dark:text-white">
+                                            Quiz
+                                        </h2>
+
+                                        <p className="mt-4 text-sm/relaxed">
+                                            Testez vos connaissances avec nos quiz interactifs. Les quiz sont conçus pour vous aider à évaluer votre compréhension des sujets et à renforcer votre apprentissage.
                                         </p>
                                     </div>
 
-                                    <svg
-                                        className="size-6 shrink-0 self-center stroke-[#7EBA27]"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        strokeWidth="1.5"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75"
-                                        />
-                                    </svg>
-                                </a>
+                                    <Svg2 />
+                                </motion.a>
+                                {/* Quiz Section */}
+                                <motion.a
+                                    href={route('home')}
+                                    className="flex items-start gap-4 rounded-lg bg-white p-6 shadow-[0px_14px_34px_0px_rgba(0,0,0,0.08)] ring-1 ring-white/[0.05] transition duration-300 hover:text-black/70 hover:ring-black/20 focus:outline-none focus-visible:ring-[#7EBA27] lg:pb-10 dark:bg-zinc-900 dark:ring-zinc-800 dark:hover:text-white/70 dark:hover:ring-zinc-700 dark:focus-visible:ring-[#7EBA27]"
+                                    variants={itemVariants}
+                                >
+                                    <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-[#7EBA27]/10 sm:size-16">
+                                    <Svg1 />
+                                    </div>
+
+                                    <div className="pt-3 sm:pt-5">
+                                        <h2 className="text-xl font-semibold text-black dark:text-white">
+                                            Programme
+                                        </h2>
+
+                                        <p className="mt-4 text-sm/relaxed">
+                                            Consultez le programme de formation détaillé.                                        </p>
+                                    </div>
+
+                                    <Svg2 />
+                                </motion.a>
 
                             </div>
-                        </main>
+                        </motion.main>
 
-                        <footer className="py-16 text-center text-sm text-black dark:text-white/70">
+                        <motion.footer
+                            className="py-16 text-center text-sm text-black dark:text-white/70"
+                            variants={itemVariants}
+                        >
                             &copy; {new Date().getFullYear()} {import.meta.env.VITE_APP_NAME}. All rights reserved.
-                        </footer>
+                        </motion.footer>
                     </div>
                 </div>
             </div>
