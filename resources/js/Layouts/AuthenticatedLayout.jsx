@@ -221,25 +221,29 @@ export default function AuthenticatedLayout({ header, children }) {
                 >
 
                     <div className="space-y-1 pb-3 pt-2">
-
+                    {user.role === 'admin' && (
                         <ResponsiveNavLink
                             href={route('dashboard')}
                             active={route().current('dashboard')}
                         >
                             Dashboard
                         </ResponsiveNavLink>
+                    )}
                         <ResponsiveNavLink
                             href={route('home')}
                             active={route().current('home')}
                         >
+
                             Home
                         </ResponsiveNavLink>
+                        {user.role === 'admin' && (
                         <ResponsiveNavLink
                             href={route('programmes.index')}
                             active={route().current('programmes.index')}
                         >
                             Programme
                         </ResponsiveNavLink>
+                        )}
                         <ResponsiveNavLink
                             href={route('user-progress.index')}
                             active={route().current('user-progress.index')}
