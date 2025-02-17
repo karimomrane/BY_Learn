@@ -1,13 +1,23 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { router, useForm, usePage } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { motion } from "framer-motion";
 import "../styles.css";
 import Quiz from "./Quiz";
-
+import { FaStar, FaChevronDown, FaChevronUp } from "react-icons/fa";
 export default function Program() {
-    const { program, userprogress } = usePage().props;
+    const { program, userprogress, rankbyprogram } = usePage().props;
+    console.log(rankbyprogram);
 
+    function formatDuration(seconds) {
+        const days = Math.floor(seconds / 86400);
+        const hours = Math.floor((seconds % 86400) / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+        const secs = seconds % 60;
+
+        return `${days > 0 ? `${days}d ` : ''}${hours}h ${minutes}m ${secs}s`;
+    }
+    const [expandedUser, setExpandedUser] = useState(null);
     // State for storing all answers keyed by question id.
     const [answers, setAnswers] = useState({});
     const [showModal, setShowModal] = useState(false); // State for showing/hiding the modal.
@@ -166,6 +176,19 @@ export default function Program() {
         }
     };
 
+    // Group ranking results by user
+    const groupedRankings = rankbyprogram.reduce((acc, rank) => {
+        if (!acc[rank.user.id]) {
+            acc[rank.user.id] = { ...rank, lessons: [] };
+        }
+        acc[rank.user.id].lessons.push({
+            title: rank.lesson.title,
+            score: rank.total_score,
+            duration: rank.total_duration,
+        });
+        return acc;
+    }, {});
+
     return (
         <AuthenticatedLayout
             header={
@@ -185,7 +208,7 @@ export default function Program() {
         >
             {/* Lessons List */}
             <div className="container mx-auto px-4 py-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {program.lessons.map((lesson) => {
                         const userLessonProgress = userprogress.find(
                             (progress) => progress.lesson_id === lesson.id
@@ -215,7 +238,7 @@ export default function Program() {
                                     ) : (
                                         <button
                                             onClick={() => openModal(lesson)}
-                                            className="text-blue-600 dark:text-blue-400 hover:underline"
+                                            className="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none"
                                         >
                                             View Lesson
                                         </button>
@@ -224,9 +247,103 @@ export default function Program() {
                             </motion.div>
                         );
                     })}
+
+                </div>
+                {/* Classement */}
+                <div className="mt-8 p-6 bg-white shadow-lg rounded-lg dark:bg-gray-800">
+                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Classement des Utilisateurs</h3>
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full bg-white dark:bg-gray-900 shadow-md rounded-lg">
+                            <thead>
+                                <tr className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white">
+                                    <th className="py-3 px-6 text-left">#</th>
+                                    <th className="py-3 px-6 text-left">Utilisateur</th>
+                                    <th className="py-3 px-6 text-left">Score Total</th>
+                                    <th className="py-3 px-6 text-left">Durée Totale</th>
+                                    <th className="py-3 px-6 text-left">Détails</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {Object.values(groupedRankings).map((user, index) => (
+                                    <React.Fragment key={user.user.id}>
+                                        <tr
+                                            className="border-b hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                                            onClick={() =>
+                                                setExpandedUser(expandedUser === user.user.id ? null : user.user.id)
+                                            }
+                                        >
+                                            <td className="py-4 px-6 font-semibold">
+                                                {index === 0 ? (
+                                                    <span className="text-yellow-500 text-xl">
+                                                        🏆 {index + 1}
+                                                    </span>
+                                                ) : (
+                                                    `#${index + 1}`
+                                                )}
+                                            </td>
+                                            <td className="py-4 px-6 font-medium text-gray-800 dark:text-white flex items-center">
+                                                {user.user.name}
+                                                {expandedUser === user.user.id ? (
+                                                    <FaChevronUp className="ml-2 text-gray-500" />
+                                                ) : (
+                                                    <FaChevronDown className="ml-2 text-gray-500" />
+                                                )}
+                                            </td>
+                                            <td className="py-4 px-6 text-gray-600 dark:text-gray-300">{user.total_score} pts</td>
+                                            <td className="py-4 px-6 text-gray-600 dark:text-gray-300">
+                                                {formatDuration(user.total_duration)}
+                                            </td>
+                                            <td className="py-4 px-6 text-blue-600 dark:text-blue-400 font-semibold">
+                                                Voir détails
+                                            </td>
+                                        </tr>
+
+                                        {/* Dropdown details */}
+                                        {expandedUser === user.user.id && (
+                                            <tr className="bg-gray-50 dark:bg-gray-800">
+                                                <td colSpan="5" className="p-4">
+                                                    <motion.div
+                                                        initial={{ opacity: 0, height: 0 }}
+                                                        animate={{ opacity: 1, height: "auto" }}
+                                                        transition={{ duration: 0.3 }}
+                                                        className="p-4 rounded-lg bg-gray-100 dark:bg-gray-700 shadow-md"
+                                                    >
+                                                        <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                                                            Détails des leçons
+                                                        </h4>
+                                                        <ul className="space-y-2">
+                                                            {user.lessons.map((lesson, i) => (
+                                                                <li
+                                                                    key={i}
+                                                                    className="flex justify-between p-2 bg-white dark:bg-gray-800 rounded-md shadow-md"
+                                                                >
+                                                                    <span className="text-gray-800 dark:text-white">
+                                                                        {lesson.title}
+                                                                    </span>
+                                                                    <span className="text-gray-600 dark:text-gray-300">
+                                                                        {lesson.score} pts
+                                                                    </span>
+                                                                    <span className="text-gray-600 dark:text-gray-300">
+                                                                        {formatDuration(lesson.duration)}
+                                                                    </span>
+                                                                </li>
+                                                            ))}
+                                                        </ul>
+                                                    </motion.div>
+                                                </td>
+                                            </tr>
+                                        )}
+                                    </React.Fragment>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
+
+
+            {/* Quiz Modal */}
             {showModal && selectedLesson && (
                 <Quiz
                     showModal={showModal}

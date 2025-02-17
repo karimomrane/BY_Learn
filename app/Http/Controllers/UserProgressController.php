@@ -33,7 +33,7 @@ class UserProgressController extends Controller
         $tentatives = User_progress::count();
         $pointsemis = User_progress::sum('score');
         $totalpoints = Question::count() * 10;
-        $lasttentatives = User_progress::with('user','quizze')->latest()->take(5)->get();
+        $lasttentatives = User_progress::with('user', 'quizze')->latest()->take(5)->get();
         $classementbyuser = User_progress::with('user')->selectRaw('user_id, sum(score) as total_score')
             ->groupBy('user_id')
             ->orderByDesc('total_score')
@@ -56,15 +56,37 @@ class UserProgressController extends Controller
     public function show($programId)
     {
         $program = Programme::with([
-            'lessons.quizze.questions.answers' // Load lessons with questions and answers
+            'lessons.quizze.questions.answers'
         ])->findOrFail($programId);
+
         $userprogress = User_progress::where('user_id', Auth::id())->get();
+
+        // Rank users by score first, then by duration (less time = higher rank)
+        $rankbyprogram = User_progress::select('user_id', 'lesson_id')
+            ->selectRaw('SUM(score) as total_score')
+            ->selectRaw('SUM(completed_at) as total_duration') // Total time in seconds
+            ->whereHas('lesson', function ($query) use ($programId) {
+                $query->where('programme_id', $programId);
+            })
+            ->groupBy('user_id', 'lesson_id')
+            ->orderByDesc('total_score')  // Order by score (higher is better)
+            ->orderBy('total_duration')  // Order by duration (lower is better)
+            ->with([
+                'user:id,name',
+                'lesson:id,title'
+            ])
+            ->get();
 
         return Inertia::render('UserProgress/Program', [
             'program' => $program,
-            'userprogress' => $userprogress
+            'userprogress' => $userprogress,
+            'rankbyprogram' => $rankbyprogram
         ]);
     }
+
+
+
+
 
     /**
      * Store the user's progress after completing the quiz for a lesson.
