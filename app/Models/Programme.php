@@ -14,6 +14,9 @@ class Programme extends Model
         'title',
         'description',
         'image_path',
+        'controle',
+        'date_debut',
+        'date_fin',
     ];
 
     public function lessons()

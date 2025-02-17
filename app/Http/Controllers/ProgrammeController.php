@@ -14,7 +14,7 @@ class ProgrammeController extends Controller
      */
     public function index()
     {
-        $programmes = Programme::all();
+        $programmes = Programme::orderBy('created_at', 'desc')->get();
 
         return Inertia::render('Programmes/Index', [
             'programmes' => $programmes
@@ -38,7 +38,10 @@ class ProgrammeController extends Controller
         $data = $request->validate([
             'title'       => 'required|max:255',
             'description' => 'nullable|string',
-            'image_path'  => 'nullable|image'
+            'image_path'  => 'nullable|image',
+            'controle'    => 'required|boolean',
+            'date_debut'  => 'required|date',
+            'date_fin'    => 'required|date'
         ]);
 
         // If an image is provided, store it and set the path
@@ -80,18 +83,22 @@ class ProgrammeController extends Controller
 
         // Validate input including an optional image
         $data = $request->validate([
-            'title'       => 'required|max:255',
+            'title'       => 'nullable|max:255',
             'description' => 'nullable|string',
-            'image_path'  => 'nullable|image'
+            'image_path'  => 'nullable|image',
+            'controle'    => 'nullable|boolean',
+            'date_debut'  => 'nullable|date',
+            'date_fin'    => 'nullable|date'
         ]);
 
-        // Delete image if exists
-        if ($programme->image_path) {
-            Storage::disk('public')->delete($programme->image_path);
-        }
-
         // If a new image is provided, store it and update the image_path
+        // Otherwise, keep the existing image
         if ($request->hasFile('image_path')) {
+            // Delete the existing image if it exists
+            if ($programme->image_path) {
+                Storage::disk('public')->delete($programme->image_path);
+            }
+            // Store the new image
             $data['image_path'] = $request->file('image_path')->store('programmes', 'public');
         }
 

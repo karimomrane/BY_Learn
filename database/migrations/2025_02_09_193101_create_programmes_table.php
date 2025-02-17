@@ -16,6 +16,9 @@ return new class extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             $table->string('image_path')->nullable();
+            $table->boolean('controle')->default(false);
+            $table->dateTime('date_debut');
+            $table->dateTime('date_fin');
             $table->timestamps();
         });
     }

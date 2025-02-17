@@ -22,7 +22,11 @@ Route::get('/', function () {
 });
 
 Route::get('/home', function () {
-    $programs = Programme::all();
+    $programs = Programme::whereRaw('? BETWEEN date_debut AND date_fin', [now()->addHour(1)])
+        ->orderBy('created_at', 'desc')
+        ->get();
+
+
     return Inertia::render('Home')->with('programs', $programs);
 })->middleware(['auth', 'verified'])->name('home');
 

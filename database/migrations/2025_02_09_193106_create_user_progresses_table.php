@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('lesson_id');
             $table->unsignedBigInteger('quiz_id')->nullable(); // Optional if a quiz is associated with the lesson
             $table->integer('score')->default(0);  // Points gained for completing the quiz/lesson
-            $table->timestamp('completed_at')->nullable(); // When the lesson or quiz was completed
+            $table->integer('completed_at'); // When the lesson or quiz was completed
             $table->timestamps();
 
             // Foreign key constraints

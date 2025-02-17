@@ -8,6 +8,9 @@ export default function Create() {
         title: '',
         description: '',
         image_path: null,
+        controle: false,
+        date_debut: '',
+        date_fin: ''
     });
 
     const [preview, setPreview] = useState(null);
@@ -59,6 +62,39 @@ export default function Create() {
                                     rows="4"
                                 ></textarea>
                                 {errors.description && <div className="text-red-500 text-sm mt-1">{errors.description}</div>}
+                            </div>
+
+                            {/* Controle Field */}
+                            <div className="mb-4">
+                                <label className="block text-gray-700 dark:text-gray-200 font-bold mb-2">Controle</label>
+                                <input
+                                    type="checkbox"
+                                    checked={data.controle}
+                                    onChange={(e) => setData('controle', e.target.checked)}
+                                    className="shadow rounded w-full py-2 px-3 text-gray-700 dark:text-gray-900 dark:bg-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                />
+                            </div>
+
+                            {/* Date Debut Field */}
+                            <div className="mb-4">
+                                <label className="block text-gray-700 dark:text-gray-200 font-bold mb-2">Date Debut</label>
+                                <input
+                                    type="datetime-local"
+                                    value={data.date_debut}
+                                    onChange={(e) => setData('date_debut', e.target.value)}
+                                    className="shadow rounded w-full py-2 px-3 text-gray-700 dark:text-gray-900 dark:bg-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                />
+                            </div>
+
+                            {/* Date Fin Field */}
+                            <div className="mb-4">
+                                <label className="block text-gray-700 dark:text-gray-200 font-bold mb-2">Date Fin</label>
+                                <input
+                                    type="datetime-local"
+                                    value={data.date_fin}
+                                    onChange={(e) => setData('date_fin', e.target.value)}
+                                    className="shadow rounded w-full py-2 px-3 text-gray-700 dark:text-gray-900 dark:bg-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                />
                             </div>
 
                             {/* Drag and Drop File Upload */}

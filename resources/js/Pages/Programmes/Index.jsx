@@ -80,8 +80,17 @@ export default function Index({ programmes: initialProgrammes }) {
                 <h3 className="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-2">
                   {programme.title}
                 </h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-4">
-                  {programme.description}
+                <p className="text-gray-600 dark:text-gray-300">
+                 Description : {programme.description}
+                </p>
+                <p className="text-gray-600 dark:text-gray-300">
+                  Session : {programme.controle ? 'Controle' : 'Principale'}
+                </p>
+                <p className="text-gray-600 dark:text-gray-300 ">
+                  Date Debut : {programme.date_debut}
+                </p>
+                <p className="text-gray-600 dark:text-gray-300 ">
+                  Date Fin : {programme.date_fin}
                 </p>
 
                 {/* Edit Link */}

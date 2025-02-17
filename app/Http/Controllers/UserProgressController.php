@@ -17,7 +17,7 @@ class UserProgressController extends Controller
 {
     public function index()
     {
-        $userprogress = User_progress::with('lesson', 'quizze', 'user')->get();
+        $userprogress = User_progress::with('lesson', 'quizze', 'user')->orderBy('created_at', 'desc')->get();
 
         return Inertia::render('Historique', [
             'userprogress' => $userprogress
@@ -75,13 +75,14 @@ class UserProgressController extends Controller
             'lesson_id' => 'required|exists:lessons,id',
             'score'     => 'required|integer',
             'quiz_id'   => 'required|exists:quizzes,id',
+            'completed_at' => 'required',
         ]);
         $progress = new User_progress();
         $progress->user_id     = Auth::id();
         $progress->lesson_id   = $request->lesson_id;
         $progress->quiz_id     = $request->quiz_id;
         $progress->score       = $request->score;
-        $progress->completed_at = now();
+        $progress->completed_at = $request->completed_at;
         $progress->save();
 
         // Return to the program page with a success message

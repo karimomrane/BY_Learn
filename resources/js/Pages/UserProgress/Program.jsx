@@ -1,29 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { router, useForm, usePage } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { motion, AnimatePresence } from "framer-motion";
-import '../styles.css';
+import { motion } from "framer-motion";
+import "../styles.css";
+import Quiz from "./Quiz";
 
 export default function Program() {
     const { program, userprogress } = usePage().props;
-    console.log(program);
 
     // State for storing all answers keyed by question id.
     const [answers, setAnswers] = useState({});
-    // State for showing/hiding the modal.
-    const [showModal, setShowModal] = useState(false);
-    // State for the currently selected lesson.
-    const [selectedLesson, setSelectedLesson] = useState(null);
-    // State for showing score after submission.
-    const [showScore, setShowScore] = useState(false);
-    // State to store the percentage score.
-    const [scorePercentage, setScorePercentage] = useState(0);
-    // (Optional) State to store the raw score.
-    const [score, setScore] = useState(0);
-    // State for the current question index (starting at 0).
-    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-    // State to store correct and incorrect answers after submission.
-    const [results, setResults] = useState({});
+    const [showModal, setShowModal] = useState(false); // State for showing/hiding the modal.
+    const [selectedLesson, setSelectedLesson] = useState(null); // State for the currently selected lesson.
+    const [showScore, setShowScore] = useState(false); // State for showing score after submission.
+    const [scorePercentage, setScorePercentage] = useState(0); // State to store the percentage score.
+    const [score, setScore] = useState(0); // State to store the raw score.
+    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0); // State for the current question index.
+    const [results, setResults] = useState({}); // State to store correct and incorrect answers after submission.
+    const [submit, setSubmit] = useState(false); // State to track if the quiz is submitted.
+    const [quizStarted, setQuizStarted] = useState(false); // State to track if the quiz has started.
+    const [timeElapsed, setTimeElapsed] = useState(0); // State to track the elapsed time in seconds.
+
+    // Timer-related states
+    const [startTime, setStartTime] = useState(null); // To store the start time.
+    const [elapsedTime, setElapsedTime] = useState(0); // To store the elapsed time in seconds.
+    const [timerRunning, setTimerRunning] = useState(false); // To check if the timer is running.
 
     // Initialize form data using useForm.
     const { data, setData } = useForm({
@@ -31,6 +32,7 @@ export default function Program() {
         score: 0,
         program_id: program.id,
         quiz_id: null,
+        completed_at: null,
     });
 
     // Animation variants for the modal container.
@@ -53,6 +55,13 @@ export default function Program() {
         exit: { opacity: 0, x: -50, transition: { duration: 0.3 } },
     };
 
+    // Start the timer when the user clicks the "Start" button.
+    const startTimer = () => {
+        setStartTime(Date.now()); // Set the start time to the current time.
+        setTimerRunning(true); // Set the timer as running.
+    };
+
+    // Handle answer selection.
     const handleAnswerChange = (questionId, answerId) => {
         setAnswers((prev) => ({
             ...prev,
@@ -60,17 +69,13 @@ export default function Program() {
         }));
     };
 
-    const handleSubmit = (e) => {
-        if (e) e.preventDefault();
-
-        // Calculate the score and store correct/incorrect answers.
+    // Calculate the score and store results.
+    const calculateScore = () => {
         let calculatedScore = 0;
         const results = {};
         selectedLesson.quizze?.questions.forEach((question) => {
             const selectedAnswer = answers[question.id];
-            const correctAnswer = question.answers.find(
-                (answer) => answer.is_correct === 1
-            )?.id;
+            const correctAnswer = question.answers.find((answer) => answer.is_correct === 1)?.id;
             results[question.id] = {
                 selectedAnswer,
                 correctAnswer,
@@ -80,20 +85,31 @@ export default function Program() {
                 calculatedScore += 10;
             }
         });
+        return { calculatedScore, results };
+    };
 
-        // Calculate the percentage score.
+    // Handle quiz submission.
+    const handleSubmit = (e) => {
+        setSubmit(true);
+        if (e) e.preventDefault();
+
+        // Calculate the score and results.
+        const { calculatedScore, results } = calculateScore();
         const totalQuestions = selectedLesson.quizze?.questions.length;
         const percentage = ((calculatedScore / (totalQuestions * 10)) * 100).toFixed(2);
+
+        // Update state with the calculated score and results.
         setScorePercentage(percentage);
         setScore(calculatedScore);
-        setResults(results); // Store results for display.
+        setResults(results);
 
-        // Update data using setData with the calculated score and selected lesson.
+        // Update form data with the calculated score, selected lesson, and elapsed time.
         setData({
             ...data,
             lesson_id: selectedLesson.id,
             quiz_id: selectedLesson.quizze.id,
             score: calculatedScore,
+            completed_at: timeElapsed, // Save the elapsed time in seconds.
         });
 
         // Send the data to the backend.
@@ -104,13 +120,14 @@ export default function Program() {
                 score: calculatedScore,
                 program_id: program.id,
                 quiz_id: selectedLesson.quizze.id,
+                completed_at: timeElapsed, // Include the elapsed time in the POST request.
             },
             {
                 onSuccess: () => {
                     setShowScore(true); // Show the score after a successful submission.
                 },
                 onError: () => {
-                    // Handle error (for example, show an error message)
+                    // Handle error (for example, show an error message).
                 },
             }
         );
@@ -119,15 +136,17 @@ export default function Program() {
     // When opening a lesson modal, reset quiz state.
     const openModal = (lesson) => {
         setSelectedLesson(lesson);
-        console.log("Selected Lesson:", selectedLesson);
-
         setShowModal(true);
         setShowScore(false); // Reset score display when opening the modal.
         setAnswers({}); // Clear previous answers.
         setCurrentQuestionIndex(0); // Start at the first question.
         setResults({}); // Clear previous results.
+        setStartTime(null); // Reset the start time.
+        setElapsedTime(0); // Reset the elapsed time.
+        setTimerRunning(false); // Reset the timer state.
     };
 
+    // Close the modal and reset states.
     const closeModal = () => {
         setShowModal(false);
         setSelectedLesson(null);
@@ -208,212 +227,32 @@ export default function Program() {
                 </div>
             </div>
 
-            {/* Modal */}
-            <AnimatePresence>
-                {showModal && selectedLesson && (
-                    <motion.div
-                        className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                    >
-                        <motion.div
-                            className="bg-white dark:bg-gray-800 p-8 rounded-lg max-w-4xl w-full h-[600px] overflow-auto custom-scrollbar relative"
-                            variants={modalVariants}
-                            initial="hidden"
-                            animate="visible"
-                            exit="exit"
-                        >
-                            <h2 className="text-3xl font-semibold mb-6 text-gray-800 dark:text-white">{selectedLesson.title}</h2>
-                            <div className="mb-6">
-                                {/* Video */}
-                                <video width="100%" controls className="h-96 rounded-lg">
-                                    <source src={"/storage/" + selectedLesson.video_path} type="video/mp4" />
-                                    Your browser does not support the video tag.
-                                </video>
-                            </div>
-
-                            {/* Quiz */}
-                            {!showScore ? (
-                                <div>
-                                    {/* Display one question at a time with animation */}
-                                    <AnimatePresence exitBeforeEnter>
-                                        {selectedLesson.quizze?.questions && (
-                                            <motion.div
-                                                key={selectedLesson.quizze.questions[currentQuestionIndex].id}
-                                                variants={questionVariants}
-                                                initial="initial"
-                                                animate="animate"
-                                                exit="exit"
-                                            >
-                                                <p className="font-semibold text-lg mb-6 text-gray-800 dark:text-white">
-                                                    {selectedLesson.quizze.questions[currentQuestionIndex].question_text}
-                                                </p>
-                                                <ul className="grid grid-cols-2 gap-4">
-                                                    {selectedLesson.quizze.questions[
-                                                        currentQuestionIndex
-                                                    ].answers.map((answer) => (
-                                                        <motion.li
-                                                            key={answer.id}
-                                                            whileHover={{ scale: 1.05 }}
-                                                            whileTap={{ scale: 0.95 }}
-                                                        >
-                                                            <label className="block">
-                                                                <input
-                                                                    type="radio"
-                                                                    name={`question_${selectedLesson.quizze.questions[currentQuestionIndex].id}`}
-                                                                    value={answer.id}
-                                                                    checked={
-                                                                        answers[
-                                                                        selectedLesson.quizze.questions[currentQuestionIndex].id
-                                                                        ] === answer.id
-                                                                    }
-                                                                    onChange={() =>
-                                                                        handleAnswerChange(
-                                                                            selectedLesson.quizze.questions[currentQuestionIndex].id,
-                                                                            answer.id
-                                                                        )
-                                                                    }
-                                                                    className="hidden"
-                                                                />
-                                                                <motion.div
-                                                                    className={`p-4 rounded-lg cursor-pointer text-center transition-colors duration-300 ${answers[selectedLesson.quizze.questions[currentQuestionIndex].id] === answer.id
-                                                                            ? "bg-blue-600 text-white shadow-lg"
-                                                                            : "bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600"
-                                                                        }`}
-                                                                    initial={{ opacity: 0, y: 20 }}
-                                                                    animate={{ opacity: 1, y: 0 }}
-                                                                    exit={{ opacity: 0, y: -20 }}
-                                                                >
-                                                                    {answer.answer_text}
-                                                                </motion.div>
-                                                            </label>
-                                                        </motion.li>
-                                                    ))}
-                                                </ul>
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-
-                                    {/* Navigation Buttons */}
-                                    <div className="flex justify-between mt-8">
-                                        {currentQuestionIndex > 0 && (
-                                            <button
-                                                type="button"
-                                                onClick={handleBack}
-                                                className="bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-white px-6 py-2 rounded-lg hover:bg-gray-400 dark:hover:bg-gray-600 transition-colors duration-300"
-                                            >
-                                                Previous
-                                            </button>
-                                        )}
-                                        {currentQuestionIndex < selectedLesson.quizze?.questions.length - 1 ? (
-                                            <button
-                                                type="button"
-                                                onClick={handleNext}
-                                                disabled={
-                                                    !answers[
-                                                    selectedLesson.quizze?.questions[currentQuestionIndex].id
-                                                    ]
-                                                }
-                                                className="bg-blue-600 dark:bg-blue-700 text-white px-6 py-2 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-800 transition-colors duration-300 disabled:opacity-50"
-                                            >
-                                                Next
-                                            </button>
-                                        ) : (
-                                            <button
-                                                type="button"
-                                                onClick={handleSubmit}
-                                                disabled={
-                                                    !answers[
-                                                    selectedLesson.quizze?.questions[currentQuestionIndex].id
-                                                    ]
-                                                }
-                                                className="bg-green-600 dark:bg-green-700 text-white px-6 py-2 rounded-lg hover:bg-green-700 dark:hover:bg-green-800 transition-colors duration-300 disabled:opacity-50"
-                                            >
-                                                Submit Answers
-                                            </button>
-                                        )}
-                                    </div>
-                                </div>
-                            ) : (
-                                // Score display after quiz submission.
-                                <motion.div
-                                    className="text-center"
-                                    variants={scoreVariants}
-                                    initial="hidden"
-                                    animate="visible"
-                                >
-                                    <h3 className="text-3xl font-semibold mb-6 text-gray-800 dark:text-white">Test Completed!</h3>
-                                    <p className="text-xl mb-4 text-gray-800 dark:text-white">
-                                        Your Score:{" "}
-                                        <span className="font-bold">
-                                            {score}/{selectedLesson.quizze?.questions.length * 10}
-                                        </span>
-                                        <br />
-                                        <span className="text-2xl font-bold">{scorePercentage}%</span>
-                                    </p>
-
-                                    {/* Display all answers with correct/incorrect highlights */}
-                                    <div className="mt-8 text-left">
-                                        {selectedLesson.quizze?.questions.map((question) => {
-                                            const result = results[question.id];
-                                            const correctAnswer = question.answers.find(
-                                                (answer) => answer.is_correct === 1
-                                            );
-                                            return (
-                                                <div key={question.id} className="mb-6">
-                                                    <p className="font-semibold text-lg mb-2 text-gray-800 dark:text-white">
-                                                        {question.question_text}
-                                                    </p>
-                                                    <ul className="space-y-2">
-                                                        {question.answers.map((answer) => {
-                                                            const isSelected = result?.selectedAnswer === answer.id;
-                                                            const isCorrect = answer.id === correctAnswer.id;
-                                                            return (
-                                                                <li
-                                                                    key={answer.id}
-                                                                    className={`p-3 rounded-lg ${isCorrect
-                                                                            ? "bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-100"
-                                                                            : isSelected
-                                                                                ? "bg-red-100 dark:bg-red-800 text-red-800 dark:text-red-100"
-                                                                                : "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
-                                                                        }`}
-                                                                >
-                                                                    {answer.answer_text}
-                                                                    {isCorrect && (
-                                                                        <span className="ml-2 text-sm font-semibold">
-                                                                            (Correct Answer)
-                                                                        </span>
-                                                                    )}
-                                                                </li>
-                                                            );
-                                                        })}
-                                                    </ul>
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-
-                                    <button
-                                        onClick={closeModal}
-                                        className="mt-6 bg-blue-600 dark:bg-blue-700 text-white py-3 px-6 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-800 transition-colors duration-300 text-lg"
-                                    >
-                                        Close
-                                    </button>
-                                </motion.div>
-                            )}
-
-                            {/* Close button for the modal */}
-                            <button
-                                onClick={closeModal}
-                                className="absolute top-4 right-4 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 text-2xl"
-                            >
-                                X
-                            </button>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+            {showModal && selectedLesson && (
+                <Quiz
+                    showModal={showModal}
+                    selectedLesson={selectedLesson}
+                    modalVariants={modalVariants}
+                    questionVariants={questionVariants}
+                    scoreVariants={scoreVariants}
+                    handleBack={handleBack}
+                    handleNext={handleNext}
+                    handleSubmit={handleSubmit}
+                    answers={answers}
+                    handleAnswerChange={handleAnswerChange}
+                    showScore={showScore}
+                    submit={submit}
+                    scorePercentage={scorePercentage}
+                    score={score}
+                    results={results}
+                    currentQuestionIndex={currentQuestionIndex}
+                    closeModal={closeModal}
+                    startTimer={startTimer}
+                    quizStarted={quizStarted}
+                    timeElapsed={timeElapsed}
+                    setQuizStarted={setQuizStarted}
+                    setTimeElapsed={setTimeElapsed}
+                />
+            )}
         </AuthenticatedLayout>
     );
 }

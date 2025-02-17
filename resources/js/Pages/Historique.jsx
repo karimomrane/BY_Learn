@@ -62,7 +62,13 @@ export default function Historique({ userprogress }) {
                         scope="col"
                         className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                       >
-                        Date
+                        Durée
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
+                        Date debut
                       </th>
                       <th scope="col" className="px-6 py-3" />
                     </tr>
@@ -88,6 +94,11 @@ export default function Historique({ userprogress }) {
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-gray-900 dark:text-gray-100">
                             {progress.score}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-900 dark:text-gray-100">
+                            {new Intl.DateTimeFormat('fr-FR', { minute: '2-digit', second: '2-digit' }).format(new Date(progress.completed_at * 1000))}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">

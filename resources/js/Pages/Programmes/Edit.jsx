@@ -4,10 +4,13 @@ import { Link, router, useForm } from '@inertiajs/react';
 import { useDropzone } from 'react-dropzone';
 
 export default function Edit({ programme }) {
-    const { data, setData, errors,processing } = useForm({
+    const { data, setData, errors, processing } = useForm({
         title: programme.title,
         description: programme.description,
         image_path: null,
+        controle: programme.controle,
+        date_debut: programme.date_debut,
+        date_fin: programme.date_fin
     });
 
     const handleSubmit = (e) => {
@@ -20,12 +23,21 @@ export default function Edit({ programme }) {
         if (data.image_path) {
             formData.append('image_path', data.image_path);
         }
+        formData.append('controle', data.controle ? 1 : 0);
+        formData.append('date_debut', data.date_debut);
+        formData.append('date_fin', data.date_fin);
         formData.append("_method", "put");
         // Send the request using Inertia's router
         router.post(route('programmes.update', programme.id), formData, {
             preserveScroll: true,
-            forceFormData: true, // Ensure Laravel reads it as FormData
+            forceFormData: true,
+            onError: (errors) => {
+                alert(Object.entries(errors).map(([key, value]) => `${key}: ${value}`).join("\n"));
+                console.log(errors);
+
+            }
         });
+
     };
 
     const [preview, setPreview] = useState(programme.image_path ? `/storage/${programme.image_path}` : null);
@@ -72,6 +84,39 @@ export default function Edit({ programme }) {
                                     rows="4"
                                 ></textarea>
                                 {errors.description && <div className="text-red-500 text-sm mt-1">{errors.description}</div>}
+                            </div>
+
+                            {/* Controle Field */}
+                            <div className="mb-4">
+                                <label className="block text-gray-700 dark:text-gray-200 font-bold mb-2">Controle</label>
+                                <input
+                                    type="checkbox"
+                                    checked={data.controle}
+                                    onChange={(e) => setData('controle', e.target.checked)}
+                                    className="shadow rounded w-full py-2 px-3 text-gray-700 dark:text-gray-900 dark:bg-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                />
+                            </div>
+
+                            {/* Date Debut Field */}
+                            <div className="mb-4">
+                                <label className="block text-gray-700 dark:text-gray-200 font-bold mb-2">Date Debut</label>
+                                <input
+                                    type="datetime-local"
+                                    value={data.date_debut}
+                                    onChange={(e) => setData('date_debut', e.target.value)}
+                                    className="shadow rounded w-full py-2 px-3 text-gray-700 dark:text-gray-900 dark:bg-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                />
+                            </div>
+
+                            {/* Date Fin Field */}
+                            <div className="mb-4">
+                                <label className="block text-gray-700 dark:text-gray-200 font-bold mb-2">Date Fin</label>
+                                <input
+                                    type="datetime-local"
+                                    value={data.date_fin}
+                                    onChange={(e) => setData('date_fin', e.target.value)}
+                                    className="shadow rounded w-full py-2 px-3 text-gray-700 dark:text-gray-900 dark:bg-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                />
                             </div>
 
                             {/* Drag and Drop File Upload */}
