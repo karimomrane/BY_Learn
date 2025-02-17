@@ -17,7 +17,11 @@ class UserProgressController extends Controller
 {
     public function index()
     {
-        $userprogress = User_progress::with('lesson', 'quizze', 'user')->orderBy('created_at', 'desc')->get();
+        if (Auth::user()->role === 'admin') {
+            $userprogress = User_progress::with('lesson', 'quizze', 'user')->orderBy('created_at', 'desc')->get();
+        } else {
+            $userprogress = User_progress::with('lesson', 'quizze', 'user')->where('user_id', Auth::id())->orderBy('created_at', 'desc')->get();
+        }
 
         return Inertia::render('Historique', [
             'userprogress' => $userprogress

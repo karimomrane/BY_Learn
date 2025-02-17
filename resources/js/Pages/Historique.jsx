@@ -1,7 +1,8 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, usePage } from '@inertiajs/react';
 
 export default function Historique({ userprogress }) {
+    const user = usePage().props.auth.user;
   console.log(userprogress);
   const { delete: destroy } = useForm();
 
@@ -106,6 +107,7 @@ export default function Historique({ userprogress }) {
                             {new Intl.DateTimeFormat('fr-FR', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(new Date(progress.created_at))}
                           </div>
                         </td>
+                        {user.role === 'admin' && (
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                           <button
                             onClick={() => handleDelete(progress.id)}
@@ -113,7 +115,7 @@ export default function Historique({ userprogress }) {
                           >
                             Delete
                           </button>
-                        </td>
+                        </td>)}
                       </tr>
                     ))}
                   </tbody>
