@@ -84,9 +84,12 @@ export default function Quiz({
                         {quizStarted && (
                             <>
                                 {/* Timer Display */}
-                                <div className="mb-6 text-lg font-semibold text-gray-800 dark:text-white">
+                                {!showScore && (
+                                  <div className="mb-6 text-lg font-semibold text-gray-800 dark:text-white">
                                     Time : {new Date(timeElapsed * 1000).toISOString().substr(11, 8)} seconds
                                 </div>
+                                )}
+
 
                                 {/* Quiz Questions */}
                                 {!showScore ? (
