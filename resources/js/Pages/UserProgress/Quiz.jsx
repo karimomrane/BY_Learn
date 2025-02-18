@@ -76,7 +76,7 @@ export default function Quiz({
                                 onClick={handleStartQuiz}
                                 className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
                             >
-                                Start Quiz
+                              {showScore ? "View Results" : "Begin Quiz"}
                             </button>
                         )}
 

@@ -101,6 +101,8 @@ export default function Program() {
     // Handle quiz submission.
     const handleSubmit = (e) => {
         setSubmit(true);
+
+
         if (e) e.preventDefault();
 
         // Calculate the score and results.
@@ -135,6 +137,10 @@ export default function Program() {
             {
                 onSuccess: () => {
                     setShowScore(true); // Show the score after a successful submission.
+                    setSubmit(false);
+                    setTimerRunning(false);
+                    setTimeElapsed(0); // Reset the timer after a successful submission.
+                    setQuizStarted(false); // Reset the quiz started state after a successful submission.
                 },
                 onError: () => {
                     // Handle error (for example, show an error message).
@@ -161,6 +167,11 @@ export default function Program() {
         setShowModal(false);
         setSelectedLesson(null);
         setShowScore(false); // Reset score display when closing the modal.
+        setShowScore(true); // Show the score after a successful submission.
+        setSubmit(false);
+        setTimerRunning(false);
+        setTimeElapsed(0); // Reset the timer after a successful submission.
+        setQuizStarted(false); // Reset the quiz started state after a successful submission.
     };
 
     // Handlers to navigate through questions.
