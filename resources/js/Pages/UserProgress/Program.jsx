@@ -208,7 +208,7 @@ export default function Program() {
                     <img
                         src={"/storage/" + program.image_path}
                         alt="Program Cover"
-                        className="w-full h-full object-cover rounded-3xl"
+                        className="w-full h-full object-cover  rounded-t-3xl"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80"></div>
                     <h2 className="absolute bottom-4 left-4 text-white text-3xl font-bold">
@@ -260,96 +260,189 @@ export default function Program() {
                     })}
 
                 </div>
-                {/* Classement */}
                 <div className="mt-8 p-6 bg-white shadow-lg rounded-lg dark:bg-gray-800">
-                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Classement des Utilisateurs</h3>
-                    <div className="overflow-x-auto">
-                        <table className="min-w-full bg-white dark:bg-gray-900 shadow-md rounded-lg">
-                            <thead>
-                                <tr className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white">
-                                    <th className="py-3 px-6 text-left">#</th>
-                                    <th className="py-3 px-6 text-left">Utilisateur</th>
-                                    <th className="py-3 px-6 text-left">Score Total</th>
-                                    <th className="py-3 px-6 text-left">Durée Totale</th>
-                                    <th className="py-3 px-6 text-left">Détails</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {Object.values(groupedRankings).map((user, index) => (
-                                    <React.Fragment key={user.user.id}>
-                                        <tr
-                                            className="border-b hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
-                                            onClick={() =>
-                                                setExpandedUser(expandedUser === user.user.id ? null : user.user.id)
-                                            }
-                                        >
-                                            <td className="py-4 px-6 font-semibold">
-                                                {index === 0 ? (
-                                                    <span className="text-yellow-500 text-xl">
-                                                        🏆 {index + 1}
-                                                    </span>
-                                                ) : (
-                                                    `#${index + 1}`
-                                                )}
-                                            </td>
-                                            <td className="py-4 px-6 font-medium text-gray-800 dark:text-white flex items-center">
-                                                {user.user.name}
-                                                {expandedUser === user.user.id ? (
-                                                    <FaChevronUp className="ml-2 text-gray-500" />
-                                                ) : (
-                                                    <FaChevronDown className="ml-2 text-gray-500" />
-                                                )}
-                                            </td>
-                                            <td className="py-4 px-6 text-gray-600 dark:text-gray-300">{user.total_score} pts</td>
-                                            <td className="py-4 px-6 text-gray-600 dark:text-gray-300">
-                                                {formatDuration(user.total_duration)}
-                                            </td>
-                                            <td className="py-4 px-6 text-blue-600 dark:text-blue-400 font-semibold">
-                                                Voir détails
-                                            </td>
-                                        </tr>
+                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                        Classement des Utilisateurs
+                    </h3>
 
-                                        {/* Dropdown details */}
-                                        {expandedUser === user.user.id && (
-                                            <tr className="bg-gray-50 dark:bg-gray-800">
-                                                <td colSpan="5" className="p-4">
-                                                    <motion.div
-                                                        initial={{ opacity: 0, height: 0 }}
-                                                        animate={{ opacity: 1, height: "auto" }}
-                                                        transition={{ duration: 0.3 }}
-                                                        className="p-4 rounded-lg bg-gray-100 dark:bg-gray-700 shadow-md"
-                                                    >
-                                                        <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                                                            Détails des leçons
-                                                        </h4>
-                                                        <ul className="space-y-2">
-                                                            {user.lessons.map((lesson, i) => (
-                                                                <li
-                                                                    key={i}
-                                                                    className="flex justify-between p-2 bg-white dark:bg-gray-800 rounded-md shadow-md"
-                                                                >
-                                                                    <span className="text-gray-800 dark:text-white">
-                                                                        {lesson.title}
-                                                                    </span>
-                                                                    <span className="text-gray-600 dark:text-gray-300">
-                                                                        {lesson.score} pts
-                                                                    </span>
-                                                                    <span className="text-gray-600 dark:text-gray-300">
-                                                                        {formatDuration(lesson.duration)}
-                                                                    </span>
-                                                                </li>
-                                                            ))}
-                                                        </ul>
-                                                    </motion.div>
+                    {/* Desktop Table View */}
+                    <div className="hidden sm:block">
+                        <div className="overflow-x-auto">
+                            <table className="min-w-full bg-white dark:bg-gray-900 shadow-md rounded-lg">
+                                <thead>
+                                    <tr className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white">
+                                        <th className="py-3 px-6 text-left">#</th>
+                                        <th className="py-3 px-6 text-left">Utilisateur</th>
+                                        <th className="py-3 px-6 text-left">Score Total</th>
+                                        <th className="py-3 px-6 text-left">Durée Totale</th>
+                                        <th className="py-3 px-6 text-left">Détails</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {Object.values(groupedRankings).map((user, index) => (
+                                        <React.Fragment key={user.user.id}>
+                                            <tr
+                                                className="border-b hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                                                onClick={() =>
+                                                    setExpandedUser(expandedUser === user.user.id ? null : user.user.id)
+                                                }
+                                            >
+                                                <td className="py-4 px-6 font-semibold">
+                                                    {index === 0 ? (
+                                                        <span className="text-yellow-500 text-xl">
+                                                            🏆 {index + 1}
+                                                        </span>
+                                                    ) : (
+                                                        `#${index + 1}`
+                                                    )}
+                                                </td>
+                                                <td className="py-4 px-6 font-medium text-gray-800 dark:text-white flex items-center">
+                                                    {user.user.name}
+                                                    {expandedUser === user.user.id ? (
+                                                        <FaChevronUp className="ml-2 text-gray-500" />
+                                                    ) : (
+                                                        <FaChevronDown className="ml-2 text-gray-500" />
+                                                    )}
+                                                </td>
+                                                <td className="py-4 px-6 text-gray-600 dark:text-gray-300">
+                                                    {user.total_score} pts
+                                                </td>
+                                                <td className="py-4 px-6 text-gray-600 dark:text-gray-300">
+                                                    {formatDuration(user.total_duration)}
+                                                </td>
+                                                <td className="py-4 px-6 text-blue-600 dark:text-blue-400 font-semibold">
+                                                    Voir détails
                                                 </td>
                                             </tr>
+
+                                            {/* Dropdown details for desktop */}
+                                            {expandedUser === user.user.id && (
+                                                <tr className="bg-gray-50 dark:bg-gray-800">
+                                                    <td colSpan="5" className="p-4">
+                                                        <motion.div
+                                                            initial={{ opacity: 0, height: 0 }}
+                                                            animate={{ opacity: 1, height: "auto" }}
+                                                            transition={{ duration: 0.3 }}
+                                                            className="p-4 rounded-lg bg-gray-100 dark:bg-gray-700 shadow-md"
+                                                        >
+                                                            <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                                                                Détails des leçons
+                                                            </h4>
+                                                            <ul className="space-y-2">
+                                                                {user.lessons.map((lesson, i) => (
+                                                                    <li
+                                                                        key={i}
+                                                                        className="flex justify-between p-2 bg-white dark:bg-gray-800 rounded-md shadow-md"
+                                                                    >
+                                                                        <span className="text-gray-800 dark:text-white">
+                                                                            {lesson.title}
+                                                                        </span>
+                                                                        <span className="text-gray-600 dark:text-gray-300">
+                                                                            {lesson.score} pts
+                                                                        </span>
+                                                                        <span className="text-gray-600 dark:text-gray-300">
+                                                                            {formatDuration(lesson.duration)}
+                                                                        </span>
+                                                                    </li>
+                                                                ))}
+                                                            </ul>
+                                                        </motion.div>
+                                                    </td>
+                                                </tr>
+                                            )}
+                                        </React.Fragment>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    {/* Mobile Card View */}
+                    <div className="sm:hidden space-y-4">
+                        {Object.values(groupedRankings).map((user, index) => (
+                            <div
+                                key={user.user.id}
+                                className="bg-white dark:bg-gray-800 p-4 shadow rounded-lg"
+                            >
+                                <div
+                                    className="flex justify-between items-center cursor-pointer"
+                                    onClick={() =>
+                                        setExpandedUser(expandedUser === user.user.id ? null : user.user.id)
+                                    }
+                                >
+                                    <div className="font-bold text-gray-900 dark:text-white">
+                                        {index === 0 ? (
+                                            <span className="text-yellow-500 text-xl">
+                                                🏆 {index + 1}
+                                            </span>
+                                        ) : (
+                                            `#${index + 1}`
+                                        )}{" "}
+                                        {user.user.name}
+                                    </div>
+                                    <div>
+                                        {expandedUser === user.user.id ? (
+                                            <FaChevronUp className="text-gray-500" />
+                                        ) : (
+                                            <FaChevronDown className="text-gray-500" />
                                         )}
-                                    </React.Fragment>
-                                ))}
-                            </tbody>
-                        </table>
+                                    </div>
+                                </div>
+
+                                <div className="mt-2 text-gray-600 dark:text-gray-300">
+                                    <p>
+                                        <span className="font-semibold">Score Total:</span> {user.total_score} pts
+                                    </p>
+                                    <p>
+                                        <span className="font-semibold">Durée Totale:</span>{" "}
+                                        {formatDuration(user.total_duration)}
+                                    </p>
+                                </div>
+
+                                <button
+                                    onClick={() =>
+                                        setExpandedUser(expandedUser === user.user.id ? null : user.user.id)
+                                    }
+                                    className="mt-2 text-blue-600 dark:text-blue-400 font-semibold"
+                                >
+                                    Voir détails
+                                </button>
+
+                                {expandedUser === user.user.id && (
+                                    <motion.div
+                                        initial={{ opacity: 0, height: 0 }}
+                                        animate={{ opacity: 1, height: "auto" }}
+                                        transition={{ duration: 0.3 }}
+                                        className="mt-2 p-4 rounded-lg bg-gray-100 dark:bg-gray-700 shadow"
+                                    >
+                                        <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                                            Détails des leçons
+                                        </h4>
+                                        <ul className="space-y-2">
+                                            {user.lessons.map((lesson, i) => (
+                                                <li
+                                                    key={i}
+                                                    className="flex justify-between p-2 bg-white dark:bg-gray-800 rounded-md shadow"
+                                                >
+                                                    <span className="text-gray-800 dark:text-white">
+                                                        {lesson.title}
+                                                    </span>
+                                                    <span className="text-gray-600 dark:text-gray-300">
+                                                        {lesson.score} pts
+                                                    </span>
+                                                    <span className="text-gray-600 dark:text-gray-300">
+                                                        {formatDuration(lesson.duration)}
+                                                    </span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </motion.div>
+                                )}
+                            </div>
+                        ))}
                     </div>
                 </div>
+
             </div>
 
 
