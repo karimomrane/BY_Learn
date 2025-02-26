@@ -14,6 +14,7 @@ class ProgrammeController extends Controller
      */
     public function index()
     {
+
         $programmes = Programme::orderBy('created_at', 'desc')->get();
 
         return Inertia::render('Programmes/Index', [

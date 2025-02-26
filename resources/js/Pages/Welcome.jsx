@@ -1,11 +1,7 @@
-import ApplicationLogo from '@/Components/ApplicationLogo';
-import { Head, Link } from '@inertiajs/react';
-import { motion, spring } from 'framer-motion';
-import Svg1 from './svg1';
-import Svg2 from './Svg2';
-import Svg3 from './Svg3';
+import { Head, Link, useForm } from '@inertiajs/react';
+import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import { FaMoon, FaSun } from 'react-icons/fa';
+import { FaBookOpen, FaMoon, FaQuestion, FaSun, FaVideo } from 'react-icons/fa';
 
 export default function Welcome({ auth }) {
     const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -23,13 +19,9 @@ export default function Welcome({ auth }) {
     }, [isDarkMode]);
 
     const handleImageError = () => {
-        document
-            .getElementById('screenshot-container')
-            ?.classList.add('!hidden');
+        document.getElementById('screenshot-container')?.classList.add('!hidden');
         document.getElementById('docs-card')?.classList.add('!row-span-1');
-        document
-            .getElementById('docs-card-content')
-            ?.classList.add('!flex-row');
+        document.getElementById('docs-card-content')?.classList.add('!flex-row');
         document.getElementById('background')?.classList.add('!hidden');
     };
 
@@ -38,10 +30,8 @@ export default function Welcome({ auth }) {
         hidden: { opacity: 0 },
         visible: {
             opacity: 1,
-            transition: {
-                staggerChildren: 0.2,
-            },
-        },
+            transition: { staggerChildren: 0.2 }
+        }
     };
 
     const itemVariants = {
@@ -49,211 +39,315 @@ export default function Welcome({ auth }) {
         visible: {
             y: 0,
             opacity: 1,
-            transition: {
-                duration: 0.5,
-            },
-        },
+            transition: { duration: 0.5 }
+        }
     };
 
     return (
         <>
             <Head title="Welcome to LMS" />
-            <div className="bg-gradient-to-br from-blue-50 to-purple-50 text-black/50 dark:bg-gradient-to-br dark:from-gray-900 dark:to-black dark:text-white/50">
-                <img
-                    id="background"
-                    className="absolute -left-20 top-0 max-w-[877px]"
-                    src="/welcomebg.svg"
-                />
-                <div className="relative flex min-h-screen flex-col items-center justify-center selection:bg-[#7EBA27] selection:text-white">
-                    <div className="relative w-full max-w-2xl px-6 lg:max-w-7xl">
-                        <motion.header
-                            className="grid grid-cols-2 items-center gap-2 py-10 lg:grid-cols-3"
-                            variants={containerVariants}
-                            initial="hidden"
-                            animate="visible"
-                        >
-                            <motion.div
-                                className="flex lg:col-start-2 lg:justify-center"
-                                variants={itemVariants}
-                            >
-                                <ApplicationLogo className="h-20 w-20 fill-current text-gray-500" />
-                            </motion.div>
-                            <motion.nav
-                                className="-mx-3 flex flex-1 justify-end"
-                                variants={itemVariants}
-                            >
-                                {/* Dark Mode Toggle */}
-                                <div
-                                    onClick={() => setIsDarkMode((prev) => !prev)}
-                                    className={`flex h-[35px] w-[70px] rounded-[50px] bg-zinc-100 p-[3px] mr-5 shadow-inner hover:cursor-pointer dark:bg-zinc-700 ${isDarkMode && 'place-content-end'}`}
-                                >
-                                    <motion.div
-                                        className="flex h-[28px] w-[28px] items-center justify-center rounded-full bg-black/90"
-                                        layout
-                                        transition={spring}
+            <div
+                id="page-container"
+                className="mx-auto flex min-h-dvh w-full min-w-[320px] flex-col bg-gray-100 dark:bg-gray-900"
+            >
+                <main id="page-content" className="flex max-w-full flex-auto flex-col">
+                    <div className="bg-[#f5f5f5] dark:bg-gray-800">
+                        {/* Header */}
+                        <header id="page-header" className="flex flex-none items-center py-10">
+                            <div className="container mx-auto flex flex-col gap-6 px-4 text-center sm:flex-row sm:items-center sm:justify-between sm:gap-0 lg:px-8 xl:max-w-6xl">
+                                <div className="flex items-center justify-center gap-2">
+                                    <a
+                                        href="#"
+                                        className="inline-flex items-center gap-2 text-lg font-bold tracking-wide text-indigo-900 dark:text-indigo-100 hover:opacity-75"
                                     >
-                                        <motion.div whileTap={{ rotate: 360 }}>
-                                            {isDarkMode ? (
-                                                <FaSun className="h-5 w-5 text-yellow-300" />
-                                            ) : (
-                                                <FaMoon className="h-5 w-5 text-slate-200" />
-                                            )}
-                                        </motion.div>
-                                    </motion.div>
+                                        <img src="/logo.png" className="h-8 w-8" alt="Logo" />
+                                        <span>BY LEARN</span>
+                                    </a>
                                 </div>
-                                {auth.user ? (
-                                    <Link
-                                        href={auth.user.role === 'admin' ? route('dashboard') : route('home')}
-                                        className="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#7EBA27] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
-                                    >
-                                        {auth.user.role === 'admin' ? 'Dashboard' : 'Home'}
-                                    </Link>
-                                ) : (
-                                    <>
+                                <nav className="flex items-center justify-center gap-4 text-sm sm:gap-6">
+                                    {auth.user ? (
                                         <Link
-                                            href={route('login')}
-                                            className="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#7EBA27] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
+                                            href={auth.user.role === 'admin' ? route('dashboard') : route('home')}
+                                            className="inline-flex items-center gap-2 font-semibold text-indigo-900 dark:text-indigo-100 hover:text-white"
                                         >
-                                            Log in
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                viewBox="0 0 20 20"
+                                                fill="currentColor"
+                                                className="hi-mini hi-user-circle inline-block h-5 w-5 opacity-50"
+                                            >
+                                                <path
+                                                    fillRule="evenodd"
+                                                    d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-5.5-2.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0ZM10 12a5.99 5.99 0 0 0-4.793 2.39A6.483 6.483 0 0 0 10 16.5a6.483 6.483 0 0 0 4.793-2.11A5.99 5.99 0 0 0 10 12Z"
+                                                    clipRule="evenodd"
+                                                />
+                                            </svg>
+                                            {auth.user.name}
                                         </Link>
-                                        <Link
-                                            href={route('register')}
-                                            className="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#7EBA27] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
-                                        >
-                                            Register
-                                        </Link>
-                                    </>
-                                )}
-                            </motion.nav>
-                        </motion.header>
-
-                        <motion.main
-                            className="mt-6"
-                            variants={containerVariants}
-                            initial="hidden"
-                            animate="visible"
-                        >
-                            <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
-                                <motion.a
-                                    href={route('login')}
-                                    id="docs-card"
-                                    className="flex flex-col items-start gap-6 overflow-hidden rounded-lg bg-white p-6 shadow-[0px_14px_34px_0px_rgba(0,0,0,0.08)] ring-1 ring-white/[0.05] transition duration-300 hover:text-black/70 hover:ring-black/20 focus:outline-none focus-visible:ring-[#7EBA27] md:row-span-3 lg:p-10 lg:pb-10 dark:bg-zinc-900 dark:ring-zinc-800 dark:hover:text-white/70 dark:hover:ring-zinc-700 dark:focus-visible:ring-[#7EBA27]"
-                                    variants={itemVariants}
-                                >
-                                    <div
-                                        id="screenshot-container"
-                                        className="relative flex w-full flex-1 items-stretch"
+                                    ) : (
+                                        <>
+                                            <Link
+                                                href={route('login')}
+                                                className="inline-flex items-center gap-2 font-semibold text-indigo-900 dark:text-indigo-100 hover:text-white"
+                                            >
+                                                Log in
+                                            </Link>
+                                            <Link
+                                                href={route('register')}
+                                                className="inline-flex items-center gap-2 font-semibold text-indigo-900 dark:text-indigo-100 hover:text-white"
+                                            >
+                                                Register
+                                            </Link>
+                                        </>
+                                    )}
+                                    {/* Dark Mode Toggle */}
+                                    <button
+                                        onClick={() => setIsDarkMode(!isDarkMode)}
+                                        className="p-2 rounded-md focus:outline-none text-indigo-900 dark:text-indigo-300"
+                                        aria-label="Toggle Dark Mode"
                                     >
-                                        <img
-                                            src="/welcomeslide.png"
-                                            alt="LMS dashboard screenshot"
-                                            className="aspect-video h-full w-full flex-1 rounded-[10px] object-cover object-top drop-shadow-[0px_4px_34px_rgba(0,0,0,0.06)] dark:hidden"
-                                            onError={handleImageError}
-                                        />
-                                        <img
-                                            src="/welcomeslidedark.png"
-                                            alt="LMS dashboard screenshot"
-                                            className="hidden aspect-video h-full w-full flex-1 rounded-[10px] object-cover object-top drop-shadow-[0px_4px_34px_rgba(0,0,0,0.25)] dark:block"
-                                        />
-                                        <div className="absolute -bottom-16 -left-16 h-40 w-[calc(100%+8rem)] bg-gradient-to-b from-transparent via-white to-white dark:via-zinc-900 dark:to-zinc-900"></div>
-                                    </div>
-
-                                    <div className="relative flex items-center gap-6 lg:items-end">
-                                        <div
-                                            id="docs-card-content"
-                                            className="flex items-start gap-6 lg:flex-col"
-                                        >
-                                            <Svg3 />
-
-                                            <div className="pt-3 sm:pt-5 lg:pt-0">
-                                                <h2 className="text-xl font-semibold text-black dark:text-white">
-                                                    Gestion des Cours
-                                                </h2>
-
-                                                <p className="mt-4 text-sm/relaxed">
-                                                    Notre LMS offre une plateforme complète pour gérer les cours, suivre les progrès et interagir avec les étudiants. Que vous soyez enseignant ou apprenant, nos outils sont conçus pour améliorer votre expérience.                                                </p>
-                                            </div>
-                                        </div>
-
-                                        <Svg2 />
-                                    </div>
-                                </motion.a>
-
-                                <motion.a
-                                    href={route('home')}
-                                    className="flex items-start gap-4 rounded-lg bg-white p-6 shadow-[0px_14px_34px_0px_rgba(0,0,0,0.08)] ring-1 ring-white/[0.05] transition duration-300 hover:text-black/70 hover:ring-black/20 focus:outline-none focus-visible:ring-[#7EBA27] lg:pb-10 dark:bg-zinc-900 dark:ring-zinc-800 dark:hover:text-white/70 dark:hover:ring-zinc-700 dark:focus-visible:ring-[#7EBA27]"
-                                    variants={itemVariants}
-                                >
-                                    <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-[#7EBA27]/10 sm:size-16">
-                                        <Svg1 />
-                                    </div>
-
-                                    <div className="pt-3 sm:pt-5">
-                                        <h2 className="text-xl font-semibold text-black dark:text-white">
-                                            Ressources d'Apprentissage
-                                        </h2>
-
-                                        <p className="mt-4 text-sm/relaxed">
-                                            Accédez à une vaste bibliothèque de ressources d'apprentissage, y compris des tutoriels vidéo, des quiz interactifs et des documents téléchargeables. Améliorez vos compétences et vos connaissances avec notre contenu soigneusement sélectionné.                                        </p>
-                                    </div>
-
-                                    <Svg2 />
-                                </motion.a>
-                                {/* Quiz Section */}
-                                <motion.a
-                                    href={route('home')}
-                                    className="flex items-start gap-4 rounded-lg bg-white p-6 shadow-[0px_14px_34px_0px_rgba(0,0,0,0.08)] ring-1 ring-white/[0.05] transition duration-300 hover:text-black/70 hover:ring-black/20 focus:outline-none focus-visible:ring-[#7EBA27] lg:pb-10 dark:bg-zinc-900 dark:ring-zinc-800 dark:hover:text-white/70 dark:hover:ring-zinc-700 dark:focus-visible:ring-[#7EBA27]"
-                                    variants={itemVariants}
-                                >
-                                    <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-[#7EBA27]/10 sm:size-16">
-                                    <Svg1 />
-                                    </div>
-
-                                    <div className="pt-3 sm:pt-5">
-                                        <h2 className="text-xl font-semibold text-black dark:text-white">
-                                            Quiz
-                                        </h2>
-
-                                        <p className="mt-4 text-sm/relaxed">
-                                            Testez vos connaissances avec nos quiz interactifs. Les quiz sont conçus pour vous aider à évaluer votre compréhension des sujets et à renforcer votre apprentissage.
-                                        </p>
-                                    </div>
-
-                                    <Svg2 />
-                                </motion.a>
-                                {/* Quiz Section */}
-                                <motion.a
-                                    href={route('home')}
-                                    className="flex items-start gap-4 rounded-lg bg-white p-6 shadow-[0px_14px_34px_0px_rgba(0,0,0,0.08)] ring-1 ring-white/[0.05] transition duration-300 hover:text-black/70 hover:ring-black/20 focus:outline-none focus-visible:ring-[#7EBA27] lg:pb-10 dark:bg-zinc-900 dark:ring-zinc-800 dark:hover:text-white/70 dark:hover:ring-zinc-700 dark:focus-visible:ring-[#7EBA27]"
-                                    variants={itemVariants}
-                                >
-                                    <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-[#7EBA27]/10 sm:size-16">
-                                    <Svg1 />
-                                    </div>
-
-                                    <div className="pt-3 sm:pt-5">
-                                        <h2 className="text-xl font-semibold text-black dark:text-white">
-                                            Programme
-                                        </h2>
-
-                                        <p className="mt-4 text-sm/relaxed">
-                                            Consultez le programme de formation détaillé.                                        </p>
-                                    </div>
-
-                                    <Svg2 />
-                                </motion.a>
-
+                                        {isDarkMode ? <FaSun size={18} /> : <FaMoon size={18} />}
+                                    </button>
+                                </nav>
                             </div>
-                        </motion.main>
+                        </header>
 
-                        <motion.footer
-                            className="py-16 text-center text-sm text-black dark:text-white/70"
-                            variants={itemVariants}
-                        >
-                            &copy; {new Date().getFullYear()} {import.meta.env.VITE_APP_NAME}. All rights reserved.
-                        </motion.footer>
+                        <div className="container mx-auto px-4 pt-16 lg:px-8 lg:pt-32 xl:max-w-6xl">
+                            <div className="text-center">
+                                <motion.h2
+                                    className="mb-4 text-balance text-3xl font-extrabold text-indigo-900 dark:text-indigo-300 md:text-5xl"
+                                    initial={{ opacity: 0, y: -20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.6 }}
+                                >
+                                    Bienvenue sur notre LMS BY Learn
+                                </motion.h2>
+                                <motion.h3
+                                    className="mx-auto text-lg font-medium text-gray-900 dark:text-gray-200 md:text-xl md:leading-relaxed lg:w-2/3"
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    transition={{ delay: 0.3, duration: 0.6 }}
+                                >
+                                    Notre LMS offre une plateforme complète pour gérer les cours, suivre les progrès et interagir avec les employers.
+                                </motion.h3>
+                            </div>
+                            <motion.div
+                                className="flex flex-wrap justify-center gap-4 pb-16 pt-10"
+                                variants={containerVariants}
+                                initial="hidden"
+                                whileInView="visible"
+                                viewport={{ once: true }}
+                            >
+                                <motion.div variants={itemVariants}>
+                                    <Link
+                                        href={route('home')}
+                                        className="inline-flex items-center justify-center gap-2 rounded-full border border-blue-800 bg-[#74B01A] px-6 py-4 font-semibold leading-6 text-white hover:border-blue-700/50 hover:bg-blue-700/50 hover:text-white focus:outline-none focus:ring focus:ring-blue-500/50 active:border-blue-700 active:bg-blue-700"
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            viewBox="0 0 20 20"
+                                            fill="#000"
+                                            className="hi-mini hi-arrow-right inline-block h-5 w-5 opacity-50"
+                                        >
+                                            <path
+                                                fillRule="evenodd"
+                                                d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z"
+                                                clipRule="evenodd"
+                                            />
+                                        </svg>
+                                        <span>Get Started</span>
+                                    </Link>
+                                </motion.div>
+                            </motion.div>
+                            <motion.div
+                                className="relative mx-5 -mb-20 rounded-xl bg-white p-2 shadow-lg sm:-mb-40 lg:mx-32"
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                whileInView={{ opacity: 1, scale: 1 }}
+                                transition={{ duration: 0.6 }}
+                                viewport={{ once: true }}
+                            >
+                                <div className="aspect-w-16 aspect-h-10 w-full bg-gray-200">
+                                    <img
+                                        src="/welcomeslide.png"
+                                        alt="Hero Image"
+                                        className="mx-auto rounded-lg dark:hidden"
+                                        onError={handleImageError}
+                                    />
+                                    <img
+                                        src="/welcomeslidedark.png"
+                                        alt="Hero Image"
+                                        className="mx-auto rounded-lg hidden dark:block"
+                                        onError={handleImageError}
+                                    />
+                                </div>
+
+                            </motion.div>
+                        </div>
                     </div>
-                </div>
+
+                    {/* Services Section */}
+                    <motion.div
+                        className="bg-white pt-40 dark:bg-gray-800"
+                        variants={containerVariants}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true }}
+                    >
+                        <div className="container mx-auto space-y-16 px-4 py-16 lg:px-8 lg:py-32 xl:max-w-6xl">
+                            <div className="text-center">
+                                <motion.h2
+                                    className="mb-4 text-3xl font-extrabold text-gray-900 dark:text-white md:text-4xl"
+                                    variants={itemVariants}
+                                >
+                                    Services
+                                </motion.h2>
+                                <motion.h3
+                                    className="mx-auto text-lg font-medium text-gray-600 dark:text-gray-300 md:text-xl md:leading-relaxed lg:w-2/3"
+                                    variants={itemVariants}
+                                >
+                                    Découvrez nos services dédiés à l'apprentissage.
+                                </motion.h3>
+                            </div>
+                            <motion.div
+                                className="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-12"
+                                variants={containerVariants}
+                            >
+                                <motion.div className="py-5 text-center" variants={itemVariants}>
+                                    <div className="relative mb-12 ml-3 inline-flex h-16 w-16 items-center justify-center">
+                                        <div className="absolute inset-0 -m-3 translate-x-1 translate-y-1 rounded-full bg-green-300"></div>
+                                        <div className="absolute inset-0 -m-3 rounded-full bg-[#74B01A]"></div>
+                                        <FaBookOpen className="relative inline-block h-10 w-10 text-white opacity-90 transition duration-150 ease-out" />
+                                    </div>
+                                    <h4 className="mb-2 text-xl font-bold dark:text-white">Gestion des Cours</h4>
+                                    <p className="text-left leading-relaxed text-gray-600 dark:text-gray-300">
+                                        Notre LMS offre une plateforme complète pour gérer les cours, suivre les progrès et interagir avec les étudiants.
+                                    </p>
+                                </motion.div>
+                                <motion.div className="py-5 text-center" variants={itemVariants}>
+                                    <div className="relative mb-12 ml-3 inline-flex h-16 w-16 items-center justify-center">
+                                        <div className="absolute inset-0 -m-3 translate-x-1 translate-y-1 rounded-full bg-green-300"></div>
+                                        <div className="absolute inset-0 -m-3 rounded-full bg-[#74B01A]"></div>
+                                        <FaVideo className="relative inline-block h-10 w-10 text-white opacity-90 transition duration-150 ease-out" />
+                                    </div>
+                                    <h4 className="mb-2 text-xl font-bold dark:text-white">Ressources d'Apprentissage</h4>
+                                    <p className="text-left leading-relaxed text-gray-600 dark:text-gray-300">
+                                        Accédez à une vaste bibliothèque de ressources d'apprentissage, y compris des tutoriels vidéo et des quiz interactifs.
+                                    </p>
+                                </motion.div>
+                                <motion.div className="py-5 text-center" variants={itemVariants}>
+                                    <div className="relative mb-12 ml-3 inline-flex h-16 w-16 items-center justify-center">
+                                        <div className="absolute inset-0 -m-3 translate-x-1 translate-y-1 rounded-full bg-green-300"></div>
+                                        <div className="absolute inset-0 -m-3 rounded-full bg-[#74B01A]"></div>
+                                        <FaQuestion className="relative inline-block h-10 w-10 text-white opacity-90 transition duration-150 ease-out" />
+                                    </div>
+                                    <h4 className="mb-2 text-xl font-bold dark:text-white">Quiz</h4>
+                                    <p className="text-left leading-relaxed text-gray-600 dark:text-gray-300">
+                                        Testez vos connaissances avec nos quiz interactifs conçus pour renforcer votre apprentissage.
+                                    </p>
+                                </motion.div>
+                            </motion.div>
+                        </div>
+                    </motion.div>
+
+                    {/* How It Works Section */}
+                    <motion.div
+                        className="relative bg-white dark:bg-gray-800"
+                        variants={containerVariants}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true }}
+                    >
+                        <div className="absolute inset-0 skew-y-1 bg-[#74B01A]"></div>
+                        <div className="container relative mx-auto space-y-16 px-4 py-16 lg:px-8 lg:py-32 xl:max-w-7xl">
+                            <div className="text-center">
+                                <motion.h2
+                                    className="text-3xl font-extrabold text-white md:text-4xl"
+                                    variants={itemVariants}
+                                >
+                                    How it works?
+                                </motion.h2>
+                            </div>
+                            <motion.div
+                                className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3"
+                                variants={containerVariants}
+                            >
+                                <motion.div className="rounded-3xl bg-white/5 p-10 shadow-sm transition hover:bg-white/10" variants={itemVariants}>
+                                    <svg
+                                        className="mb-5 inline-block h-12 w-12 text-gray-100"
+                                        fill="currentColor"
+                                        viewBox="0 0 20 20"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                        <path
+                                            fillRule="evenodd"
+                                            d="M3 5a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2h-2.22l.123.489.804.804A1 1 0 0113 18H7a1 1 0 01-.707-1.707l.804-.804L7.22 15H5a2 2 0 01-2-2V5zm5.771 7H5V5h10v7H8.771z"
+                                            clipRule="evenodd"
+                                        />
+                                    </svg>
+                                    <h4 className="mb-2 text-lg font-bold text-white">
+                                        1. Se Connecter avec votre compte
+                                    </h4>
+                                    <p className="text-sm leading-relaxed text-white/75">
+                                        Cliquez sur le bouton de connexion et renseignez vos informations.
+                                    </p>
+                                </motion.div>
+                                <motion.div className="rounded-3xl bg-white/5 p-10 shadow-sm transition hover:bg-white/10" variants={itemVariants}>
+                                    <svg
+                                        stroke="currentColor"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        className="mb-5 inline-block h-12 w-12 text-gray-100"
+                                    >
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                                    </svg>
+                                    <h4 className="mb-2 text-lg font-bold text-white">
+                                        2. Consulter les programmes et les cours
+                                    </h4>
+                                    <p className="text-sm leading-relaxed text-white/75">
+                                        Parcourez une gamme complète de programmes et de cours avec des vidéos explicatives.
+                                    </p>
+                                </motion.div>
+                                <motion.div className="rounded-3xl bg-white/5 p-10 shadow-sm transition hover:bg-white/10 sm:col-span-2 lg:col-span-1" variants={itemVariants}>
+                                    <svg
+                                        className="mb-5 inline-block h-12 w-12 text-gray-100"
+                                        fill="currentColor"
+                                        viewBox="0 0 20 20"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                                    </svg>
+                                    <h4 className="mb-2 text-lg font-bold text-white">
+                                        3. Passer des quizz et améliorer vos compétences
+                                    </h4>
+                                    <p className="text-sm leading-relaxed text-white/75">
+                                        Répondez aux questions et gagnez des points pour renforcer votre apprentissage.
+                                    </p>
+                                </motion.div>
+                            </motion.div>
+                        </div>
+                    </motion.div>
+
+                    {/* Footer */}
+                    <footer id="page-footer" className="bg-white dark:bg-gray-800">
+                        <div className="container mx-auto flex flex-col gap-6 px-4 py-16 text-center text-sm md:flex-row md:justify-between md:gap-0 md:text-left lg:px-8 lg:py-32 xl:max-w-6xl">
+                            <nav className="space-x-2 sm:space-x-4">
+                                <a href="#" className="font-medium text-gray-700 dark:text-gray-300 hover:text-blue-500">
+                                    About
+                                </a>
+                                <a href="#" className="font-medium text-gray-700 dark:text-gray-300 hover:text-blue-500">
+                                    Terms of Service
+                                </a>
+                                <a href="#" className="font-medium text-gray-700 dark:text-gray-300 hover:text-blue-500">
+                                    Privacy Policy
+                                </a>
+                            </nav>
+                            <div className="text-gray-500 dark:text-gray-400">
+                                <span className="font-medium">Ben Yaghlane</span> &copy; {new Date().getFullYear()}
+                            </div>
+                        </div>
+                    </footer>
+                </main>
             </div>
         </>
     );
