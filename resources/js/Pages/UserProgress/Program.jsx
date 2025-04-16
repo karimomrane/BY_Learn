@@ -7,7 +7,7 @@ import Quiz from "./Quiz";
 import { FaStar, FaChevronDown, FaChevronUp } from "react-icons/fa";
 export default function Program() {
     const { program, userprogress, rankbyprogram } = usePage().props;
-    console.log(rankbyprogram);
+    console.log('fdfdfdf', rankbyprogram);
 
     function formatDuration(seconds) {
         const days = Math.floor(seconds / 86400);
@@ -221,9 +221,12 @@ export default function Program() {
             <div className="container mx-auto px-4 py-8">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {program.lessons.map((lesson) => {
-                        const userLessonProgress = userprogress.find(
-                            (progress) => progress.lesson_id === lesson.id
-                        );
+                        const userLessonProgress = userprogress
+                            .filter(progress => progress.lesson_id === lesson.id)
+                            .reduce((total, progress) => total + (progress.score || 0), 0);
+
+                            console.log('aaaaa',userLessonProgress);
+
                         return (
                             <motion.div
                                 key={lesson.id}
@@ -236,7 +239,7 @@ export default function Program() {
                                     <p className="text-gray-600 dark:text-gray-300 mb-4">
                                         {userLessonProgress ? (
                                             <span className="text-green-600 dark:text-green-400 font-semibold">
-                                                Score: {userLessonProgress.score}
+                                                Score: {userLessonProgress}
                                             </span>
                                         ) : (
                                             <span className="text-yellow-600 dark:text-yellow-400 font-semibold">
