@@ -61,7 +61,7 @@ export default function Welcome({ auth }) {
                                         className="inline-flex items-center gap-2 text-lg font-bold tracking-wide text-indigo-900 dark:text-indigo-100 hover:opacity-75"
                                     >
                                         <img src="/logo.png" className="h-8 w-8" alt="Logo" />
-                                        <span>BY LEARN</span>
+                                        <span>Biwai LEARN</span>
                                     </a>
                                 </div>
                                 <nav className="flex items-center justify-center gap-4 text-sm sm:gap-6">
@@ -120,7 +120,7 @@ export default function Welcome({ auth }) {
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.6 }}
                                 >
-                                    Bienvenue sur notre LMS BY Learn
+                                    Bienvenue sur notre LMS Biwai
                                 </motion.h2>
                                 <motion.h3
                                     className="mx-auto text-lg font-medium text-gray-900 dark:text-gray-200 md:text-xl md:leading-relaxed lg:w-2/3"
@@ -128,7 +128,7 @@ export default function Welcome({ auth }) {
                                     animate={{ opacity: 1 }}
                                     transition={{ delay: 0.3, duration: 0.6 }}
                                 >
-                                    Notre LMS offre une plateforme complète pour gérer les cours, suivre les progrès et interagir avec les employers.
+                                    Notre LMS offre une plateforme complète pour gérer les cours, suivre le progrè et interagir avec les collaboreurs.
                                 </motion.h3>
                             </div>
                             <motion.div
@@ -343,7 +343,7 @@ export default function Welcome({ auth }) {
                                 </a>
                             </nav>
                             <div className="text-gray-500 dark:text-gray-400">
-                                <span className="font-medium">Ben Yaghlane</span> &copy; {new Date().getFullYear()}
+                                <span className="font-medium">BIWAI</span> &copy; {new Date().getFullYear()}
                             </div>
                         </div>
                     </footer>
