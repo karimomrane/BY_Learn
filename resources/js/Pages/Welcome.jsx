@@ -92,12 +92,12 @@ export default function Welcome({ auth }) {
                                             >
                                                 Log in
                                             </Link>
-                                            <Link
+                                            {/* <Link
                                                 href={route('register')}
                                                 className="inline-flex items-center gap-2 font-semibold text-indigo-900 dark:text-indigo-100 hover:text-white"
                                             >
                                                 Register
-                                            </Link>
+                                            </Link> */}
                                         </>
                                     )}
                                     {/* Dark Mode Toggle */}
