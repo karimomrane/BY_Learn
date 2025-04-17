@@ -283,9 +283,6 @@ export default function Program() {
                                         <React.Fragment key={user.user.id}>
                                             <tr
                                                 className="border-b hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
-                                                onClick={() =>
-                                                    setExpandedUser(expandedUser === user.user.id ? null : user.user.id)
-                                                }
                                             >
                                                 <td className="py-4 px-6 font-semibold">
                                                     {index === 0 ? (
@@ -294,7 +291,7 @@ export default function Program() {
                                                         </span>
                                                     ) : (
                                                         <span className="dark:text-white">
-                                                            {index + 1}
+                                                            #{index + 1}
                                                         </span>
                                                     )}
                                                 </td>
@@ -320,16 +317,13 @@ export default function Program() {
 
                     {/* Mobile Card View */}
                     <div className="sm:hidden space-y-4">
-                        {Object.values(groupedRankings).map((user, index) => (
+                        {Object.values(rankbyprogram).map((user, index) => (
                             <div
                                 key={user.user.id}
                                 className="bg-white dark:bg-gray-800 p-4 shadow rounded-lg"
                             >
                                 <div
                                     className="flex justify-between items-center cursor-pointer"
-                                    onClick={() =>
-                                        setExpandedUser(expandedUser === user.user.id ? null : user.user.id)
-                                    }
                                 >
                                     <div className="font-bold text-gray-900 dark:text-white">
                                         {index === 0 ? (
@@ -340,13 +334,6 @@ export default function Program() {
                                             `#${index + 1}`
                                         )}{" "}
                                         {user.user.name}
-                                    </div>
-                                    <div>
-                                        {expandedUser === user.user.id ? (
-                                            <FaChevronUp className="text-gray-500" />
-                                        ) : (
-                                            <FaChevronDown className="text-gray-500" />
-                                        )}
                                     </div>
                                 </div>
 
@@ -360,45 +347,6 @@ export default function Program() {
                                     </p>
                                 </div>
 
-                                <button
-                                    onClick={() =>
-                                        setExpandedUser(expandedUser === user.user.id ? null : user.user.id)
-                                    }
-                                    className="mt-2 text-blue-600 dark:text-blue-400 font-semibold"
-                                >
-                                    Voir détails
-                                </button>
-
-                                {expandedUser === user.user.id && (
-                                    <motion.div
-                                        initial={{ opacity: 0, height: 0 }}
-                                        animate={{ opacity: 1, height: "auto" }}
-                                        transition={{ duration: 0.3 }}
-                                        className="mt-2 p-4 rounded-lg bg-gray-100 dark:bg-gray-700 shadow"
-                                    >
-                                        <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                                            Détails des leçons
-                                        </h4>
-                                        <ul className="space-y-2">
-                                            {user.lessons.map((lesson, i) => (
-                                                <li
-                                                    key={i}
-                                                    className="flex justify-between p-2 bg-white dark:bg-gray-800 rounded-md shadow"
-                                                >
-                                                    <span className="text-gray-800 dark:text-white">
-                                                        {lesson.title}
-                                                    </span>
-                                                    <span className="text-gray-600 dark:text-gray-300">
-                                                        {lesson.score} pts
-                                                    </span>
-                                                    <span className="text-gray-600 dark:text-gray-300">
-                                                        {formatDuration(lesson.duration)}
-                                                    </span>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </motion.div>
-                                )}
                             </div>
                         ))}
                     </div>
