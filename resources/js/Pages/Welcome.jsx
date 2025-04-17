@@ -54,7 +54,7 @@ export default function Welcome({ auth }) {
                     <div className="bg-[#f5f5f5] dark:bg-gray-800">
                         {/* Header */}
                         <header id="page-header" className="flex flex-none items-center py-10">
-                            <div className="container mx-auto flex flex-col gap-6 px-4 text-center sm:flex-row sm:items-center sm:justify-between sm:gap-0 lg:px-8 xl:max-w-6xl">
+                            <div className="container mx-auto flex flex-col gap-6 px-4 text-center sm:flex-row sm:items-center sm:justify-between sm:gap-0">
                                 <div className="flex items-center justify-center gap-2">
                                     <a
                                         href="#"
@@ -193,7 +193,7 @@ export default function Welcome({ auth }) {
                         whileInView="visible"
                         viewport={{ once: true }}
                     >
-                        <div className="container mx-auto space-y-16 px-4 py-16 lg:px-8 lg:py-32 xl:max-w-6xl">
+                        <div className="container mx-auto space-y-16 px-4 py-16 lg:py-32">
                             <div className="text-center">
                                 <motion.h2
                                     className="mb-4 text-3xl font-extrabold text-gray-900 dark:text-white md:text-4xl"
@@ -258,7 +258,7 @@ export default function Welcome({ auth }) {
                         viewport={{ once: true }}
                     >
                         <div className="absolute inset-0 skew-y-1 bg-[#74B01A]"></div>
-                        <div className="container relative mx-auto space-y-16 px-4 py-16 lg:px-8 lg:py-32 xl:max-w-7xl">
+                        <div className="container relative mx-auto space-y-16 px-4 py-16 lg:px-8 lg:py-32 ">
                             <div className="text-center">
                                 <motion.h2
                                     className="text-3xl font-extrabold text-white md:text-4xl"
@@ -330,7 +330,7 @@ export default function Welcome({ auth }) {
 
                     {/* Footer */}
                     <footer id="page-footer" className="bg-white dark:bg-gray-800">
-                        <div className="container mx-auto flex flex-col gap-6 px-4 py-16 text-center text-sm md:flex-row md:justify-between md:gap-0 md:text-left lg:px-8 lg:py-32 xl:max-w-6xl">
+                        <div className="container mx-auto flex flex-col gap-6 px-4 py-16 text-center text-sm md:flex-row md:justify-between md:gap-0 md:text-left lg:py-32">
                             <nav className="space-x-2 sm:space-x-4">
                                 <a href="#" className="font-medium text-gray-700 dark:text-gray-300 hover:text-blue-500">
                                     About

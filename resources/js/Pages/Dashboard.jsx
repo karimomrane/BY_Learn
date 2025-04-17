@@ -28,7 +28,7 @@ export default function Dashboard({
             <Head title="Tableau de Bord" />
 
             <div className="py-12">
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+                <div className="mx-auto max-w-16xl sm:px-6 lg:px-8">
                     {/* First Group of Cards */}
                     <div className="grid grid-cols-2 gap-6 sm:grid-cols-2 lg:grid-cols-4">
                         {[
