@@ -106,7 +106,7 @@ export default function Dashboard({
                                     Points Obtenus
                                 </h3>
                                 <p className="mt-2 text-2xl font-bold text-gray-900 dark:text-gray-100">
-                                    {pointsemis} / {totalpoints}
+                                    {pointsemis}
                                 </p>
                             </div>
                         </motion.div>
