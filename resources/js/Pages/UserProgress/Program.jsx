@@ -225,7 +225,7 @@ export default function Program() {
                             .filter(progress => progress.lesson_id === lesson.id)
                             .reduce((total, progress) => total + (progress.score || 0), 0);
 
-                            console.log('aaaaa',userLessonProgress);
+                        console.log('aaaaa', userLessonProgress);
 
                         return (
                             <motion.div
@@ -276,11 +276,10 @@ export default function Program() {
                                         <th className="py-3 px-6 text-left">Utilisateur</th>
                                         <th className="py-3 px-6 text-left">Score Total</th>
                                         <th className="py-3 px-6 text-left">Durée Totale</th>
-                                        <th className="py-3 px-6 text-left">Détails</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {Object.values(groupedRankings).map((user, index) => (
+                                    {Object.values(rankbyprogram).map((user, index) => (
                                         <React.Fragment key={user.user.id}>
                                             <tr
                                                 className="border-b hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
@@ -294,16 +293,13 @@ export default function Program() {
                                                             🏆 {index + 1}
                                                         </span>
                                                     ) : (
-                                                        `#${index + 1}`
+                                                        <span className="dark:text-white">
+                                                            {index + 1}
+                                                        </span>
                                                     )}
                                                 </td>
                                                 <td className="py-4 px-6 font-medium text-gray-800 dark:text-white flex items-center">
                                                     {user.user.name}
-                                                    {expandedUser === user.user.id ? (
-                                                        <FaChevronUp className="ml-2 text-gray-500" />
-                                                    ) : (
-                                                        <FaChevronDown className="ml-2 text-gray-500" />
-                                                    )}
                                                 </td>
                                                 <td className="py-4 px-6 text-gray-600 dark:text-gray-300">
                                                     {user.total_score} pts
@@ -311,46 +307,10 @@ export default function Program() {
                                                 <td className="py-4 px-6 text-gray-600 dark:text-gray-300">
                                                     {formatDuration(user.total_duration)}
                                                 </td>
-                                                <td className="py-4 px-6 text-blue-600 dark:text-blue-400 font-semibold">
-                                                    Voir détails
-                                                </td>
+
                                             </tr>
 
-                                            {/* Dropdown details for desktop */}
-                                            {expandedUser === user.user.id && (
-                                                <tr className="bg-gray-50 dark:bg-gray-800">
-                                                    <td colSpan="5" className="p-4">
-                                                        <motion.div
-                                                            initial={{ opacity: 0, height: 0 }}
-                                                            animate={{ opacity: 1, height: "auto" }}
-                                                            transition={{ duration: 0.3 }}
-                                                            className="p-4 rounded-lg bg-gray-100 dark:bg-gray-700 shadow-md"
-                                                        >
-                                                            <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                                                                Détails des leçons
-                                                            </h4>
-                                                            <ul className="space-y-2">
-                                                                {user.lessons.map((lesson, i) => (
-                                                                    <li
-                                                                        key={i}
-                                                                        className="flex justify-between p-2 bg-white dark:bg-gray-800 rounded-md shadow-md"
-                                                                    >
-                                                                        <span className="text-gray-800 dark:text-white">
-                                                                            {lesson.title}
-                                                                        </span>
-                                                                        <span className="text-gray-600 dark:text-gray-300">
-                                                                            {lesson.score} pts
-                                                                        </span>
-                                                                        <span className="text-gray-600 dark:text-gray-300">
-                                                                            {formatDuration(lesson.duration)}
-                                                                        </span>
-                                                                    </li>
-                                                                ))}
-                                                            </ul>
-                                                        </motion.div>
-                                                    </td>
-                                                </tr>
-                                            )}
+
                                         </React.Fragment>
                                     ))}
                                 </tbody>

@@ -76,7 +76,7 @@ export default function Historique({ userprogress }) {
       <Head title="Historique" />
 
       <div className="py-12">
-        <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+        <div className="max-w-16xl mx-auto sm:px-6 lg:px-8">
           <div className="bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
             <div className="p-6">
               {/* Search Bar */}
