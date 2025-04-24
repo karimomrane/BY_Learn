@@ -58,6 +58,7 @@ Route::middleware('auth')->group(function () {
     });
 
 
+    Route::resource('users', UserController::class);
 
 
     Route::get('/historique', [UserProgressController::class, 'index'])->name('user-progress.index');
@@ -66,7 +67,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/historique/{id}', [UserProgressController::class, 'destroy'])->name('user-progress.destroy');
 });
 
-Route::resource('users', UserController::class);
+
 
 
 require __DIR__ . '/auth.php';
