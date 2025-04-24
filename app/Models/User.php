@@ -63,4 +63,11 @@ class User extends Authenticatable
     {
         return $this->belongsTo(magasin::class);
     }
+
+    // App\Models\User.php
+
+    public function societe()
+    {
+        return $this->magasin ? $this->magasin->societe : null;
+    }
 }

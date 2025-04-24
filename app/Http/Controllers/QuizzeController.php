@@ -10,10 +10,13 @@ use Inertia\Inertia;
 class QuizzeController extends Controller
 {
 
+    public function getAllQuizzes()
+    {
+        $quizzes = Quizze::with('lesson')->get();
+        return response()->json($quizzes); // Ou Inertia::render(...) si c’est pour une vue
+    }
 
 
-
-    
     /**
      * Display the Quizze for a given lesson.
      */

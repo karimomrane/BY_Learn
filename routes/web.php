@@ -52,6 +52,8 @@ Route::middleware('auth')->group(function () {
     Route::group(['prefix' => 'Quizzezes/{Quizze}'], function () {
         Route::resource('questions', QuestionController::class);
     });
+    Route::get('/quizzes', [QuizzeController::class, 'getAllQuizzes'])->name('quizzes.all');
+
 
     Route::group(['prefix' => 'questions/{question}'], function () {
         Route::resource('answers', AnswerController::class);
