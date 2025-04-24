@@ -22,6 +22,8 @@ class User extends Authenticatable
         'email',
         'password',
         'phonenumber',
+        'poste_id',
+        'magasin_id',
     ];
 
     /**
@@ -50,5 +52,15 @@ class User extends Authenticatable
     public function user_progress()
     {
         return $this->hasMany(User_progress::class);
+    }
+
+    public function poste()
+    {
+        return $this->belongsTo(Poste::class);
+    }
+
+    public function magasin()
+    {
+        return $this->belongsTo(magasin::class);
     }
 }

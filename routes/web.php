@@ -6,6 +6,7 @@ use App\Http\Controllers\LessonController;
 use App\Http\Controllers\QuizzeController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\AnswerController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserProgressController;
 use App\Models\Programme;
 use Illuminate\Foundation\Application;
@@ -56,10 +57,16 @@ Route::middleware('auth')->group(function () {
         Route::resource('answers', AnswerController::class);
     });
 
+
+
+
     Route::get('/historique', [UserProgressController::class, 'index'])->name('user-progress.index');
     Route::get('/user/programmes/{programme}', [UserProgressController::class, 'show'])->name('programs.show');
     Route::post('/user/programmes/submit', [UserProgressController::class, 'store'])->name('user-progress.store');
     Route::delete('/historique/{id}', [UserProgressController::class, 'destroy'])->name('user-progress.destroy');
 });
+
+Route::resource('users', UserController::class);
+
 
 require __DIR__ . '/auth.php';
