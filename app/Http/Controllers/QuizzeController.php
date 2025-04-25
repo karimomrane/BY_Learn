@@ -9,6 +9,7 @@ use Inertia\Inertia;
 
 class QuizzeController extends Controller
 {
+
     /**
      * Display the Quizze for a given lesson.
      */

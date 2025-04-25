@@ -247,13 +247,19 @@ export default function Program() {
                                             </span>
                                         )}
                                     </p>
-
-                                    <button
+                                    {userLessonProgress ? (
+                                        <span className="text-yellow-600 dark:text-yellow-400 font-semibold">
+                                         Completed
+                                    </span>
+                                    ):(
+                                        <button
                                         onClick={() => openModal(lesson)}
                                         className="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none"
                                     >
                                         View Lesson
                                     </button>
+                                    )}
+
 
                                 </div>
                             </motion.div>

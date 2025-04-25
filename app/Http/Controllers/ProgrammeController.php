@@ -84,12 +84,12 @@ class ProgrammeController extends Controller
 
         // Validate input including an optional image
         $data = $request->validate([
-            'title'       => 'nullable|max:255',
+            'title'       => 'required|max:255',
             'description' => 'nullable|string',
             'image_path'  => 'nullable|image',
             'controle'    => 'nullable|boolean',
-            'date_debut'  => 'nullable|date',
-            'date_fin'    => 'nullable|date'
+            'date_debut'  => 'required|date',
+            'date_fin'    => 'required|date'
         ]);
 
         // If a new image is provided, store it and update the image_path

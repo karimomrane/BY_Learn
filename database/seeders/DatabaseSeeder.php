@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Karim Omrane',
             'email' => 'karimomrane7@gmail.com',
             'role' => 'admin',
+            'phonenumber' => '26923145',
             'password' => bcrypt('Azerty123*'),
 
         ]);
