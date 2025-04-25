@@ -9,6 +9,7 @@ use App\Http\Controllers\AnswerController;
 use App\Http\Controllers\AssignUserQuizController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserProgressController;
+use App\Models\AssignUserQuiz;
 use App\Models\Programme;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -24,12 +25,24 @@ Route::get('/', function () {
 });
 
 Route::get('/home', function () {
+    // Get the current user's assigned quiz IDs
+    $assignedQuizIds = AssignUserQuiz::where('user_id', auth()->id())
+        ->pluck('quizze_id')
+        ->toArray();
+
+    // Get programs that:
+    // 1. Are currently active (between date_debut and date_fin)
+    // 2. Have lessons with quizzes that are assigned to the current user
     $programs = Programme::whereRaw('? BETWEEN date_debut AND date_fin', [now()->addHour(1)])
+        ->whereHas('lessons.quizze', function($query) use ($assignedQuizIds) {
+            $query->whereIn('id', $assignedQuizIds);
+        })
         ->orderBy('created_at', 'desc')
         ->get();
 
-
-    return Inertia::render('Home')->with('programs', $programs);
+    return Inertia::render('Home', [
+        'programs' => $programs
+    ]);
 })->middleware(['auth', 'verified'])->name('home');
 
 Route::get('/dashboard', [UserProgressController::class, 'dashboard'])->middleware(['auth', 'verified'])->name('dashboard');

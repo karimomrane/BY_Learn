@@ -13,7 +13,7 @@ class AssignUserQuizController extends Controller
     public function index()
     {
         $quizzes = Quizze::with('lesson')->get();
-        
+
         return Inertia::render('UserQuiz/AffectedUserQuiz', [
             'quizzes' => $quizzes,
             'initialQuiz' => request('quizId') ? Quizze::find(request('quizId')) : null
@@ -29,8 +29,8 @@ class AssignUserQuizController extends Controller
 
 
         return response()->json([
-            'assignedUsers' => User::whereIn('id', $assignedUserIds)->get(),
-            'unassignedUsers' => User::whereNotIn('id', $assignedUserIds)->get(),
+            'assignedUsers' => User::with("poste","magasin")->whereIn('id', $assignedUserIds)->get(),
+            'unassignedUsers' => User::with("poste","magasin")->whereNotIn('id', $assignedUserIds)->get(),
             'quiz' => $quiz
         ]);
     }
