@@ -199,12 +199,6 @@ export default function Index({ users, postes, magasins, filters }) {
                                                         >
                                                             Edit
                                                         </Link>
-                                                        <Link
-                                                            href={route('users.show', user.id)}
-                                                            className="text-green-600 hover:text-green-900 dark:text-green-400 dark:hover:text-green-300 transition-colors"
-                                                        >
-                                                            View
-                                                        </Link>
                                                     </div>
                                                 </td>
                                             </tr>
