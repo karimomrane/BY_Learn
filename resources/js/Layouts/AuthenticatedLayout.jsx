@@ -176,6 +176,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                 </div>
                             )}
                             {user.role === 'admin' && (
+                                <>
                                 <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                     <NavLink
                                         href={route('users.index')}
@@ -184,6 +185,16 @@ export default function AuthenticatedLayout({ header, children }) {
                                         Utilisateur
                                     </NavLink>
                                 </div>
+                                <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                    <NavLink
+                                        href={route('quiz.user.assignment')}
+                                        active={route().current('quiz.user.assignment')}
+                                    >
+
+                                        Gestion des Assignations Quiz
+                                    </NavLink>
+                                </div>
+                                </>
                             )}
                             <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <NavLink
@@ -194,17 +205,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                 </NavLink>
                             </div>
 
-                            {user.role === 'admin' && (
-                                <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                    <NavLink
-                                        href={route('quiz.user.assignment')}
-                                        active={route().current('quiz.user.assignment')}
-                                    >
 
-                                        Gestion des Assignations Quiz
-                                    </NavLink>
-                                </div>
-                            )}
                         </div>
 
                         <div className="hidden sm:ms-6 sm:flex sm:items-center">
