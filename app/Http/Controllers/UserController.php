@@ -15,14 +15,21 @@ class UserController extends Controller
     /**
      * Display a listing of the users.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::with(['poste', 'magasin'])->get();
+        $users = User::with(['poste', 'magasin'])
+            ->filter($request->only('search', 'role', 'poste', 'magasin'))
+            ->paginate(5);
 
         return Inertia::render('Users/Index', [
             'users' => $users,
+            'postes' => Poste::all(),
+            'magasins' => Magasin::all(),
+            'filters' => $request->only('search', 'role', 'poste', 'magasin'),
         ]);
     }
+
+
 
     /**
      * Show the form for creating a new user.
