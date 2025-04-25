@@ -6,6 +6,7 @@ use App\Http\Controllers\LessonController;
 use App\Http\Controllers\QuizzeController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\AnswerController;
+use App\Http\Controllers\AssignUserQuizController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserProgressController;
 use App\Models\Programme;
@@ -52,15 +53,30 @@ Route::middleware('auth')->group(function () {
     Route::group(['prefix' => 'Quizzezes/{Quizze}'], function () {
         Route::resource('questions', QuestionController::class);
     });
-    Route::get('/quizzes', [QuizzeController::class, 'getAllQuizzes'])->name('quizzes.all');
 
 
     Route::group(['prefix' => 'questions/{question}'], function () {
         Route::resource('answers', AnswerController::class);
     });
 
-
     Route::resource('users', UserController::class);
+
+
+    // **** AssignUserQuiz controller routes *****//
+
+    Route::get('/quiz-user-assignment', [AssignUserQuizController::class, 'index'])
+        ->name('quiz.user.assignment');
+
+    Route::get('/quizze/{quizId}/assigned-users', [AssignUserQuizController::class, 'getUsersData'])
+        ->name('quiz.user.data');
+
+    Route::post('/quizze/{quizId}/assign-users', [AssignUserQuizController::class, 'assignUsers'])
+        ->name('quiz.user.assign');
+
+    Route::post('/quizze/{quizId}/unassign-users', [AssignUserQuizController::class, 'unassignUsers'])
+        ->name('quiz.user.unassign');
+
+    //*******fin***********//
 
 
     Route::get('/historique', [UserProgressController::class, 'index'])->name('user-progress.index');

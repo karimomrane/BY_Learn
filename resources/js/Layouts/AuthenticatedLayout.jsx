@@ -94,6 +94,15 @@ export default function AuthenticatedLayout({ header, children }) {
                                 >
                                     Historique
                                 </ResponsiveNavLink>
+
+                                <ResponsiveNavLink
+                                    href={route('quiz.user.assignment')}
+                                    active={route().current('quiz.user.assignment')}
+                                >
+
+                                    Gestion des Assignations Quiz
+                                </ResponsiveNavLink>
+
                             </div>
                             <div className="mt-4 border-t border-gray-200 dark:border-gray-700 pt-4">
                                 <div className="text-base font-medium text-gray-800 dark:text-gray-200">
@@ -184,6 +193,18 @@ export default function AuthenticatedLayout({ header, children }) {
                                     Historique
                                 </NavLink>
                             </div>
+
+                            {user.role === 'admin' && (
+                                <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                    <NavLink
+                                        href={route('quiz.user.assignment')}
+                                        active={route().current('quiz.user.assignment')}
+                                    >
+
+                                        Gestion des Assignations Quiz
+                                    </NavLink>
+                                </div>
+                            )}
                         </div>
 
                         <div className="hidden sm:ms-6 sm:flex sm:items-center">
