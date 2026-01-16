@@ -14,7 +14,7 @@ class AssignUserQuizController extends Controller
     {
         $quizzes = Quizze::with('lesson')->get();
 
-        return Inertia::render('UserQuiz/AffectedUserQuiz', [
+        return Inertia::render('UserQuiz/Index', [
             'quizzes' => $quizzes,
             'initialQuiz' => request('quizId') ? Quizze::find(request('quizId')) : null
         ]);

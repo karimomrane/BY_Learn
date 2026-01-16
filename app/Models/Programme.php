@@ -19,6 +19,20 @@ class Programme extends Model
         'date_fin',
     ];
 
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'controle' => 'boolean',
+            'date_debut' => 'date',
+            'date_fin' => 'date',
+        ];
+    }
+
     public function lessons()
 {
     return $this->hasMany(Lesson::class);

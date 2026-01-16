@@ -40,7 +40,7 @@ export default function Edit() {
                                     placeholder="Edit your question here"
                                 ></textarea>
                                 {errors.question_text && (
-                                    <p className="mt-2 text-sm text-red-600">{errors.question_text}</p>
+                                    <p className="mt-2 text-sm text-terracotta-600">{errors.question_text}</p>
                                 )}
                             </div>
 

@@ -56,7 +56,7 @@ export default function Edit({ user, postes, magasins }) {
                                     className="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm"
                                     required
                                 />
-                                {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
+                                {errors.name && <p className="mt-1 text-sm text-terracotta-600">{errors.name}</p>}
                             </div>
 
                             {/* Phone Number Field */}
@@ -72,7 +72,7 @@ export default function Edit({ user, postes, magasins }) {
                                     className="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm"
                                     required
                                 />
-                                {errors.phonenumber && <p className="mt-1 text-sm text-red-600">{errors.phonenumber}</p>}
+                                {errors.phonenumber && <p className="mt-1 text-sm text-terracotta-600">{errors.phonenumber}</p>}
                             </div>
 
                             {/* Email Field */}
@@ -87,7 +87,7 @@ export default function Edit({ user, postes, magasins }) {
                                     onChange={(e) => setData('email', e.target.value)}
                                     className="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm"
                                 />
-                                {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
+                                {errors.email && <p className="mt-1 text-sm text-terracotta-600">{errors.email}</p>}
                             </div>
 
                             {/* Password Fields */}
@@ -122,7 +122,7 @@ export default function Edit({ user, postes, magasins }) {
                                             )}
                                         </button>
                                     </div>
-                                    {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
+                                    {errors.password && <p className="mt-1 text-sm text-terracotta-600">{errors.password}</p>}
                                     <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                                         Leave blank to keep current password
                                     </p>

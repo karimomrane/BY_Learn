@@ -27,6 +27,15 @@ class User extends Authenticatable
     ];
 
     /**
+     * The attributes that are guarded from mass assignment.
+     *
+     * @var list<string>
+     */
+    protected $guarded = [
+        'role', // Protect role from mass assignment
+    ];
+
+    /**
      * The attributes that should be hidden for serialization.
      *
      * @var list<string>
@@ -63,7 +72,7 @@ class User extends Authenticatable
     {
         return $this->belongsTo(magasin::class);
     }
-    
+
     public function scopeFilter($query, array $filters)
     {
         $query->when($filters['search'] ?? null, function ($query, $search) {

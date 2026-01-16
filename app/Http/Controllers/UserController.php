@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Traits\HasCrudResponses;
 use App\Models\User;
 use App\Models\Poste;
 use App\Models\Magasin;
@@ -12,6 +13,7 @@ use Inertia\Inertia;
 
 class UserController extends Controller
 {
+    use HasCrudResponses;
     /**
      * Display a listing of the users.
      */
@@ -19,7 +21,8 @@ class UserController extends Controller
     {
         $users = User::with(['poste', 'magasin'])
             ->filter($request->only('search', 'role', 'poste', 'magasin'))
-            ->paginate(5);
+            ->paginate(15)
+            ->withQueryString();
 
         return Inertia::render('Users/Index', [
             'users' => $users,
@@ -64,7 +67,7 @@ class UserController extends Controller
 
         User::create($validated);
 
-        return redirect()->route('users.index')->with('success', 'User created successfully.');
+        return $this->successResponse('users.index', [], 'User created successfully.');
     }
 
     /**
@@ -117,7 +120,7 @@ class UserController extends Controller
 
         $user->update($validated);
 
-        return redirect()->route('users.index')->with('success', 'User updated successfully.');
+        return $this->successResponse('users.index', [], 'User updated successfully.');
     }
 
     /**
@@ -127,6 +130,6 @@ class UserController extends Controller
     {
         $user->delete();
 
-        return redirect()->route('users.index')->with('success', 'User deleted successfully.');
+        return $this->successResponse('users.index', [], 'User deleted successfully.');
     }
 }

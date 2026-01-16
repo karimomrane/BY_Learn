@@ -13,7 +13,7 @@ class LessonPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return true; // All authenticated users can view lessons
     }
 
     /**
@@ -21,7 +21,7 @@ class LessonPolicy
      */
     public function view(User $user, Lesson $lesson): bool
     {
-        return false;
+        return true; // All authenticated users can view a lesson
     }
 
     /**
@@ -29,7 +29,7 @@ class LessonPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 
     /**
@@ -37,7 +37,7 @@ class LessonPolicy
      */
     public function update(User $user, Lesson $lesson): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 
     /**
@@ -45,7 +45,7 @@ class LessonPolicy
      */
     public function delete(User $user, Lesson $lesson): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 
     /**

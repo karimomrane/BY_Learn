@@ -7,7 +7,7 @@ import { createRoot } from 'react-dom/client';
 import { useState, useEffect } from 'react';
 import LoadingSpinner from './Components/LoadingSpinner';
 
-const appName = import.meta.env.VITE_APP_NAME || 'BY_learn';
+const appName = import.meta.env.VITE_APP_NAME || 'Biwai Learn';
 
 // 🌗 Get theme from localStorage and set progress bar color
 const getProgressBarColor = () => {

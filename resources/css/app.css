@@ -2,8 +2,104 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom CSS Variables for consistent theming */
+:root {
+    --brand-primary: #C68A6A;      /* Terracotta */
+    --brand-secondary: #6B4C3A;    /* Mocha */
+    --brand-gradient: linear-gradient(135deg, #C68A6A 0%, #7A5A47 100%);
+    --success-color: #16a34a;
+    --warning-color: #A86F5C;      /* Muted Clay */
+    --danger-color: #B8775A;       /* Medium Terracotta */
+    --info-color: #8A766A;         /* Warm Taupe */
+}
 
+/* Base Transitions */
 body * {
     @apply transition-colors duration-200;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    @apply bg-gray-100 dark:bg-gray-800;
+}
+
+::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 dark:bg-gray-600 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400 dark:bg-gray-500;
+}
+
+/* Selection Color */
+::selection {
+    @apply bg-terracotta-500/30;
+}
+
+/* Focus Ring Styles */
+@layer components {
+    .focus-ring {
+        @apply focus:outline-none focus:ring-2 focus:ring-terracotta-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800;
+    }
+
+    .btn-brand {
+        @apply inline-flex items-center justify-center px-4 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-terracotta-500 to-mocha-600 rounded-lg shadow-md hover:from-terracotta-600 hover:to-mocha-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-terracotta-500 focus:ring-offset-2 transition-all duration-200;
+    }
+
+    .btn-brand-outline {
+        @apply inline-flex items-center justify-center px-4 py-2.5 text-sm font-semibold text-terracotta-600 dark:text-terracotta-400 border-2 border-terracotta-600 dark:border-terracotta-400 rounded-lg hover:bg-beige-200 dark:hover:bg-terracotta-900/20 focus:outline-none focus:ring-2 focus:ring-terracotta-500 focus:ring-offset-2 transition-all duration-200;
+    }
+
+    .card-hover {
+        @apply hover:shadow-xl hover:-translate-y-1 transition-all duration-300;
+    }
+
+    .glass-effect {
+        @apply bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border border-gray-200/50 dark:border-gray-700/50;
+    }
+
+    .gradient-text {
+        @apply bg-gradient-to-r from-terracotta-500 to-mocha-600 bg-clip-text text-transparent;
+    }
+
+    .input-brand {
+        @apply w-full px-4 py-2.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-terracotta-500 focus:border-transparent transition-all duration-200;
+    }
+
+    .table-header {
+        @apply px-6 py-4 text-left text-xs font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wider bg-gray-50 dark:bg-gray-700/50;
+    }
+
+    .table-cell {
+        @apply px-6 py-4 text-sm text-gray-700 dark:text-gray-300;
+    }
+
+    .badge-brand {
+        @apply inline-flex items-center px-2.5 py-1 text-xs font-semibold rounded-full bg-gradient-to-r from-beige-200 to-terracotta-300 text-mocha-600 dark:from-terracotta-900/30 dark:to-mocha-900/30 dark:text-terracotta-300;
+    }
+}
+
+/* Animation Classes */
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 5px rgba(198, 138, 106, 0.3); }
+    50% { box-shadow: 0 0 20px rgba(198, 138, 106, 0.6); }
+}
+
+.animate-float {
+    animation: float 6s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
 }
 

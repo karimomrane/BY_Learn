@@ -1,7 +1,18 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import { motion } from 'framer-motion';
-import { FaUsers, FaUserCheck, FaBook, FaChalkboardTeacher, FaClipboardList, FaMedal, FaStar } from 'react-icons/fa';
+import {
+    HiUsers,
+    HiUserGroup,
+    HiAcademicCap,
+    HiBookOpen,
+    HiClipboardDocumentCheck,
+    HiTrophy,
+    HiChartBar,
+    HiSparkles
+} from 'react-icons/hi2';
+import Card from '@/Components/Card';
+import Badge from '@/Components/Badge';
 
 export default function Dashboard({
     totalusers,
@@ -14,242 +25,237 @@ export default function Dashboard({
     lasttentatives,
     classementbyuser
 }) {
-    console.log(lasttentatives);
-
-    const cardVariants = {
-        hidden: { opacity: 0, y: 20 },
-        visible: { opacity: 1, y: 0 },
-    };
+    const stats = [
+        {
+            title: "Utilisateurs",
+            value: totalusers,
+            icon: HiUsers,
+            bgColor: "bg-blue-500",
+            lightBg: "bg-blue-100 dark:bg-blue-900/30"
+        },
+        {
+            title: "Actifs",
+            value: useractif,
+            icon: HiUserGroup,
+            bgColor: "bg-green-500",
+            lightBg: "bg-green-100 dark:bg-green-900/30"
+        },
+        {
+            title: "Programmes",
+            value: programmes,
+            icon: HiAcademicCap,
+            bgColor: "bg-purple-500",
+            lightBg: "bg-purple-100 dark:bg-purple-900/30"
+        },
+        {
+            title: "Leçons",
+            value: lessons,
+            icon: HiBookOpen,
+            bgColor: "bg-orange-500",
+            lightBg: "bg-orange-100 dark:bg-orange-900/30"
+        },
+        {
+            title: "Tentatives",
+            value: tentatives,
+            icon: HiClipboardDocumentCheck,
+            bgColor: "bg-terracotta-600",
+            lightBg: "bg-beige-200 dark:bg-terracotta-900/30"
+        },
+        {
+            title: "Points",
+            value: `${pointsemis}/${totalpoints}`,
+            icon: HiTrophy,
+            bgColor: "bg-amber-500",
+            lightBg: "bg-amber-100 dark:bg-amber-900/30"
+        }
+    ];
 
     return (
         <AuthenticatedLayout
-            header={<h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">Tableau de Bord</h2>}
+            header={
+                <div className="flex items-center gap-3">
+                    <div className="p-2 bg-gradient-to-br from-terracotta-500 to-mocha-600 rounded-xl shadow-lg">
+                        <HiChartBar className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                            Tableau de Bord
+                        </h2>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                            Vue d'ensemble de la plateforme
+                        </p>
+                    </div>
+                </div>
+            }
         >
             <Head title="Tableau de Bord" />
 
-            <div className="py-12">
-                <div className="mx-auto max-w-16xl sm:px-6 lg:px-8">
-                    {/* First Group of Cards */}
-                    <div className="grid grid-cols-2 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                        {[
-                            {
-                                title: "Utilisateurs Totaux",
-                                value: totalusers,
-                                icon: <FaUsers className="text-blue-500 text-3xl" />,
-                            },
-                            {
-                                title: "Utilisateurs Actifs",
-                                value: useractif,
-                                icon: <FaUserCheck className="text-green-500 text-3xl" />,
-                            },
-                            {
-                                title: "Programmes",
-                                value: programmes,
-                                icon: <FaBook className="text-purple-500 text-3xl" />,
-                            },
-                            {
-                                title: "Leçons",
-                                value: lessons,
-                                icon: <FaChalkboardTeacher className="text-orange-500 text-3xl" />,
-                            },
-                        ].map((card, index) => (
+            <div className="space-y-6">
+                {/* Statistics Grid */}
+                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+                    {stats.map((stat, index) => {
+                        const Icon = stat.icon;
+                        return (
                             <motion.div
                                 key={index}
-                                className="p-6 bg-white rounded-lg shadow-md dark:bg-gray-800 flex items-center space-x-4"
-                                variants={cardVariants}
-                                initial="hidden"
-                                animate="visible"
-                                transition={{ duration: 0.5, delay: index * 0.2 }}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.3, delay: index * 0.05 }}
                             >
-                                {card.icon}
-                                <div>
-                                    <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200">
-                                        {card.title}
-                                    </h3>
-                                    <p className="mt-2 text-2xl font-bold text-gray-900 dark:text-gray-100">
-                                        {card.value}
-                                    </p>
-                                </div>
+                                <Card hover={false} className="relative overflow-hidden">
+                                    <div className={`absolute top-0 right-0 w-24 h-24 ${stat.bgColor} opacity-10 rounded-full -translate-y-8 translate-x-8`} />
+                                    <Card.Body className="relative">
+                                        <div className={`inline-flex p-2.5 rounded-xl ${stat.lightBg} mb-3`}>
+                                            <Icon className={`h-5 w-5 ${stat.bgColor.replace('bg-', 'text-')}`} />
+                                        </div>
+                                        <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                                            {stat.value}
+                                        </p>
+                                        <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mt-1">
+                                            {stat.title}
+                                        </p>
+                                    </Card.Body>
+                                </Card>
                             </motion.div>
-                        ))}
-                    </div>
+                        );
+                    })}
+                </div>
 
-                    {/* Second Group: Tentatives and Points Obtenus */}
-                    <div className="grid grid-cols-1 gap-6 mt-6 sm:grid-cols-2">
-                        <motion.div
-                            className="p-6 bg-white rounded-lg shadow-md dark:bg-gray-800 flex items-center space-x-4"
-                            variants={cardVariants}
-                            initial="hidden"
-                            animate="visible"
-                            transition={{ duration: 0.5, delay: 0.8 }}
-                        >
-                            <FaClipboardList className="text-red-500 text-3xl" />
-                            <div>
-                                <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200">
-                                    Tentatives
-                                </h3>
-                                <p className="mt-2 text-2xl font-bold text-gray-900 dark:text-gray-100">
-                                    {tentatives}
-                                </p>
-                            </div>
-                        </motion.div>
-                        <motion.div
-                            className="p-6 bg-white rounded-lg shadow-md dark:bg-gray-800 flex items-center space-x-4"
-                            variants={cardVariants}
-                            initial="hidden"
-                            animate="visible"
-                            transition={{ duration: 0.5, delay: 1 }}
-                        >
-                            <FaMedal className="text-yellow-500 text-3xl" />
-                            <div>
-                                <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200">
-                                    Points Obtenus
-                                </h3>
-                                <p className="mt-2 text-2xl font-bold text-gray-900 dark:text-gray-100">
-                                    {pointsemis}
-                                </p>
-                            </div>
-                        </motion.div>
-                    </div>
-
-
-                    {/* Classement des Utilisateurs */}
-                    <div className="mt-6">
-                        <motion.div className="p-6 bg-white rounded-lg shadow-md dark:bg-gray-800" variants={cardVariants} initial="hidden" animate="visible" transition={{ duration: 0.5, delay: 1.4 }}>
-                            <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200">Classement des Utilisateurs par Score</h3>
-                            <div className="mt-4 overflow-x-auto">
-                                <table className="w-full table-auto border-gray-300 dark:border-gray-600">
-                                    <thead>
-                                        <tr className="bg-gray-100 dark:bg-gray-700">
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Utilisateur</th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Score Total</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {classementbyuser?.map((user, index) => (
-                                            <tr key={index} className="border-gray-300 dark:border-gray-600">
-                                                <td className="px-6 py-3 text-gray-900 dark:text-gray-100 flex items-center">
-                                                    {index === 0 && <FaStar className="text-yellow-500 text-xl mr-2" />}
-                                                    {user.user.name}
-                                                </td>
-                                                <td className="px-6 py-3 text-gray-900 dark:text-gray-100">{user.total_score}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </motion.div>
-                    </div>
-
-
-                    {/* Dernières Tentatives */}
-                    <div className="mt-6">
-                        <motion.div
-                            className="p-6 bg-white rounded-lg shadow-md dark:bg-gray-800"
-                            variants={cardVariants}
-                            initial="hidden"
-                            animate="visible"
-                            transition={{ duration: 0.5, delay: 1.2 }}
-                        >
-                            <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200">
-                                Dernières Tentatives
-                            </h3>
-
-                            {/* Desktop Table View */}
-                            <div className="hidden sm:block mt-4">
-                                <div className="overflow-x-auto">
-                                    <table className="w-full table-auto border-gray-300 dark:border-gray-600">
-                                        <thead>
-                                            <tr className="bg-gray-100 dark:bg-gray-700">
-                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                                                    Utilisateur
-                                                </th>
-                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                                                    Quize
-                                                </th>
-                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                                                    Score
-                                                </th>
-                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                                                    Durée
-                                                </th>
-                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                                                    Date
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {lasttentatives?.map((attempt, index) => (
-                                                <tr key={index} className="border-gray-300 dark:border-gray-600">
-                                                    <td className="px-6 py-3 text-gray-900 dark:text-gray-100">
-                                                        {attempt.user.name}
-                                                    </td>
-                                                    <td className="px-6 py-3 text-gray-900 dark:text-gray-100">
-                                                        {attempt.quizze?.instructions}
-                                                    </td>
-                                                    <td className="px-6 py-3 text-gray-900 dark:text-gray-100">
-                                                        {attempt.score}
-                                                    </td>
-                                                    <td className="px-6 py-3 text-gray-900 dark:text-gray-100">
-                                                        {new Intl.DateTimeFormat('fr-FR', {
-                                                            minute: '2-digit',
-                                                            second: '2-digit'
-                                                        }).format(new Date(attempt.completed_at * 1000))}
-                                                    </td>
-                                                    <td className="px-6 py-3 text-gray-900 dark:text-gray-100">
-                                                        {new Intl.DateTimeFormat('fr-FR', {
-                                                            year: 'numeric',
-                                                            month: '2-digit',
-                                                            day: '2-digit',
-                                                            hour: '2-digit',
-                                                            minute: '2-digit'
-                                                        }).format(new Date(attempt.created_at))}
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-
-                            {/* Mobile Card View */}
-                            <div className="sm:hidden mt-4 space-y-4">
-                                {lasttentatives?.map((attempt, index) => (
-                                    <div key={index} className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-                                        <p className="text-sm text-gray-900 dark:text-gray-100">
-                                            <strong>Utilisateur:</strong> {attempt.user.name}
-                                        </p>
-                                        <p className="text-sm text-gray-900 dark:text-gray-100">
-                                            <strong>Quize:</strong> {attempt.quizze?.instructions}
-                                        </p>
-                                        <p className="text-sm text-gray-900 dark:text-gray-100">
-                                            <strong>Score:</strong> {attempt.score}
-                                        </p>
-                                        <p className="text-sm text-gray-900 dark:text-gray-100">
-                                            <strong>Durée:</strong>{' '}
-                                            {new Intl.DateTimeFormat('fr-FR', {
-                                                minute: '2-digit',
-                                                second: '2-digit'
-                                            }).format(new Date(attempt.completed_at * 1000))}
-                                        </p>
-                                        <p className="text-sm text-gray-900 dark:text-gray-100">
-                                            <strong>Date:</strong>{' '}
-                                            {new Intl.DateTimeFormat('fr-FR', {
-                                                year: 'numeric',
-                                                month: '2-digit',
-                                                day: '2-digit',
-                                                hour: '2-digit',
-                                                minute: '2-digit'
-                                            }).format(new Date(attempt.created_at))}
+                {/* Recent Activity Section */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Top 10 Leaderboard */}
+                    <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.4, delay: 0.3 }}
+                    >
+                        <Card hover={false} gradient>
+                            <Card.Header>
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2.5 bg-gradient-to-br from-amber-400 to-yellow-500 rounded-xl shadow-lg">
+                                        <HiTrophy className="h-5 w-5 text-white" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                                            Classement
+                                        </h3>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                                            Top 10 des meilleurs scores
                                         </p>
                                     </div>
-                                ))}
-                            </div>
-                        </motion.div>
-                    </div>
+                                </div>
+                            </Card.Header>
+                            <Card.Body className="p-0">
+                                <div className="divide-y divide-gray-100 dark:divide-gray-700">
+                                    {classementbyuser?.slice(0, 10).map((user, index) => (
+                                        <div
+                                            key={index}
+                                            className="flex items-center justify-between px-5 py-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                                        >
+                                            <div className="flex items-center gap-3">
+                                                <div className={`flex items-center justify-center w-8 h-8 rounded-lg font-bold text-sm ${
+                                                    index === 0
+                                                        ? 'bg-gradient-to-br from-amber-400 to-yellow-500 text-white shadow-md'
+                                                        : index === 1
+                                                        ? 'bg-gradient-to-br from-gray-300 to-gray-400 text-white'
+                                                        : index === 2
+                                                        ? 'bg-gradient-to-br from-orange-400 to-amber-500 text-white'
+                                                        : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
+                                                }`}>
+                                                    {index + 1}
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <div className="h-8 w-8 rounded-full bg-gradient-to-br from-terracotta-500 to-mocha-600 flex items-center justify-center text-white text-sm font-semibold">
+                                                        {user.user.name.charAt(0).toUpperCase()}
+                                                    </div>
+                                                    <span className="font-medium text-gray-900 dark:text-white">
+                                                        {user.user.name}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <Badge variant="brand" size="sm">
+                                                <HiSparkles className="h-3 w-3 mr-1" />
+                                                {user.total_score} pts
+                                            </Badge>
+                                        </div>
+                                    ))}
+                                </div>
+                            </Card.Body>
+                        </Card>
+                    </motion.div>
 
-
-
+                    {/* Recent Attempts */}
+                    <motion.div
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.4, delay: 0.4 }}
+                    >
+                        <Card hover={false} gradient>
+                            <Card.Header>
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2.5 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg">
+                                        <HiClipboardDocumentCheck className="h-5 w-5 text-white" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                                            Activité Récente
+                                        </h3>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                                            Dernières tentatives de quiz
+                                        </p>
+                                    </div>
+                                </div>
+                            </Card.Header>
+                            <Card.Body className="p-0">
+                                <div className="divide-y divide-gray-100 dark:divide-gray-700">
+                                    {lasttentatives?.slice(0, 5).map((attempt, index) => (
+                                        <div
+                                            key={index}
+                                            className="px-5 py-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                                        >
+                                            <div className="flex items-start justify-between mb-2">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="h-9 w-9 rounded-full bg-gradient-to-br from-terracotta-500 to-mocha-600 flex items-center justify-center text-white text-sm font-semibold">
+                                                        {attempt.user.name.charAt(0).toUpperCase()}
+                                                    </div>
+                                                    <div>
+                                                        <p className="font-medium text-gray-900 dark:text-white">
+                                                            {attempt.user.name}
+                                                        </p>
+                                                        <p className="text-sm text-gray-500 dark:text-gray-400 truncate max-w-[200px]">
+                                                            {attempt.quizze?.instructions || 'Quiz'}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <Badge
+                                                    variant={attempt.score >= 70 ? 'success' : attempt.score >= 50 ? 'warning' : 'danger'}
+                                                    size="sm"
+                                                >
+                                                    {attempt.score} pts
+                                                </Badge>
+                                            </div>
+                                            <div className="flex items-center justify-between text-xs text-gray-400 dark:text-gray-500 ml-12">
+                                                <span className="flex items-center gap-1">
+                                                    ⏱️ {new Intl.DateTimeFormat('fr-FR', {
+                                                        minute: '2-digit',
+                                                        second: '2-digit'
+                                                    }).format(new Date(attempt.completed_at * 1000))}
+                                                </span>
+                                                <span>
+                                                    {new Intl.DateTimeFormat('fr-FR', {
+                                                        day: '2-digit',
+                                                        month: 'short',
+                                                        hour: '2-digit',
+                                                        minute: '2-digit'
+                                                    }).format(new Date(attempt.created_at))}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </Card.Body>
+                        </Card>
+                    </motion.div>
                 </div>
             </div>
         </AuthenticatedLayout>

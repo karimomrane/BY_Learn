@@ -13,7 +13,7 @@ class UserProgressPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->role === 'admin'; // Only admins can view all progress
     }
 
     /**
@@ -21,7 +21,7 @@ class UserProgressPolicy
      */
     public function view(User $user, User_progress $userProgress): bool
     {
-        return false;
+        return $user->id === $userProgress->user_id || $user->role === 'admin';
     }
 
     /**
@@ -29,7 +29,7 @@ class UserProgressPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return true; // Users can create their own progress
     }
 
     /**
@@ -37,7 +37,7 @@ class UserProgressPolicy
      */
     public function update(User $user, User_progress $userProgress): bool
     {
-        return false;
+        return $user->id === $userProgress->user_id || $user->role === 'admin';
     }
 
     /**
@@ -45,7 +45,7 @@ class UserProgressPolicy
      */
     public function delete(User $user, User_progress $userProgress): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 
     /**

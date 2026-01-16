@@ -13,7 +13,7 @@ class ProgrammePolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return true; // All authenticated users can view programmes
     }
 
     /**
@@ -21,7 +21,7 @@ class ProgrammePolicy
      */
     public function view(User $user, Programme $programme): bool
     {
-        return false;
+        return true; // All authenticated users can view a programme
     }
 
     /**
@@ -29,7 +29,7 @@ class ProgrammePolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 
     /**
@@ -37,7 +37,7 @@ class ProgrammePolicy
      */
     public function update(User $user, Programme $programme): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 
     /**
@@ -45,7 +45,7 @@ class ProgrammePolicy
      */
     public function delete(User $user, Programme $programme): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 
     /**

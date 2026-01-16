@@ -13,6 +13,7 @@ use App\Models\AssignUserQuiz;
 use App\Models\Programme;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 Route::get('/', function () {
@@ -26,14 +27,16 @@ Route::get('/', function () {
 
 Route::get('/home', function () {
     // Get the current user's assigned quiz IDs
-    $assignedQuizIds = AssignUserQuiz::where('user_id', auth()->id())
+    $user = Auth::user();
+    $assignedQuizIds = AssignUserQuiz::where('user_id', $user?->id)
         ->pluck('quizze_id')
         ->toArray();
 
-    // Get programs that:
-    // 1. Are currently active (between date_debut and date_fin)
-    // 2. Have lessons with quizzes that are assigned to the current user
-    $programs = Programme::whereRaw('? BETWEEN date_debut AND date_fin', [now()->addHour(1)])
+    // Get programs that are currently active and have assigned quizzes
+    $now = now()->addHour(1);
+    $programs = Programme::with(['lessons.quizze'])
+        ->whereDate('date_debut', '<=', $now)
+        ->whereDate('date_fin', '>=', $now)
         ->whereHas('lessons.quizze', function($query) use ($assignedQuizIds) {
             $query->whereIn('id', $assignedQuizIds);
         })
@@ -53,49 +56,57 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::resource('programmes', ProgrammeController::class);
+    // Admin-only routes
+    Route::middleware('admin')->group(function () {
+        Route::resource('programmes', ProgrammeController::class)->except(['index', 'show']);
 
-    Route::group(['prefix' => 'programmes/{programme}'], function () {
-        Route::resource('lessons', LessonController::class);
+        Route::group(['prefix' => 'programmes/{programme}'], function () {
+            Route::resource('lessons', LessonController::class)->except(['index', 'show']);
+        });
+
+        Route::group(['prefix' => 'lessons/{lesson}'], function () {
+            Route::resource('Quizzezes', QuizzeController::class)->except(['index', 'show']);
+        });
+
+        Route::group(['prefix' => 'Quizzezes/{Quizze}'], function () {
+            Route::get('questions', [QuestionController::class, 'index'])->name('questions.index');
+            Route::resource('questions', QuestionController::class)->except(['index', 'show']);
+        });
+
+        Route::group(['prefix' => 'questions/{question}'], function () {
+            Route::get('answers', [AnswerController::class, 'index'])->name('answers.index');
+            Route::resource('answers', AnswerController::class)->except(['index', 'show']);
+        });
+
+        Route::resource('users', UserController::class);
+
+        // **** AssignUserQuiz controller routes *****//
+        Route::get('/quiz-user-assignment', [AssignUserQuizController::class, 'index'])
+            ->name('quiz.user.assignment');
+
+        Route::get('/quizze/{quizId}/assigned-users', [AssignUserQuizController::class, 'getUsersData'])
+            ->name('quiz.user.data');
+
+        Route::post('/quizze/{quizId}/assign-users', [AssignUserQuizController::class, 'assignUsers'])
+            ->name('quiz.user.assign');
+
+        Route::post('/quizze/{quizId}/unassign-users', [AssignUserQuizController::class, 'unassignUsers'])
+            ->name('quiz.user.unassign');
+
+        Route::delete('/historique/{id}', [UserProgressController::class, 'destroy'])->name('user-progress.destroy');
     });
 
-    Route::group(['prefix' => 'lessons/{lesson}'], function () {
-        Route::resource('Quizzezes', QuizzeController::class);
-    });
-
-    Route::group(['prefix' => 'Quizzezes/{Quizze}'], function () {
-        Route::resource('questions', QuestionController::class);
-    });
-
-
-    Route::group(['prefix' => 'questions/{question}'], function () {
-        Route::resource('answers', AnswerController::class);
-    });
-
-    Route::resource('users', UserController::class);
-
-
-    // **** AssignUserQuiz controller routes *****//
-
-    Route::get('/quiz-user-assignment', [AssignUserQuizController::class, 'index'])
-        ->name('quiz.user.assignment');
-
-    Route::get('/quizze/{quizId}/assigned-users', [AssignUserQuizController::class, 'getUsersData'])
-        ->name('quiz.user.data');
-
-    Route::post('/quizze/{quizId}/assign-users', [AssignUserQuizController::class, 'assignUsers'])
-        ->name('quiz.user.assign');
-
-    Route::post('/quizze/{quizId}/unassign-users', [AssignUserQuizController::class, 'unassignUsers'])
-        ->name('quiz.user.unassign');
-
-    //*******fin***********//
-
+    // Public authenticated routes (index and show for viewing)
+    Route::get('/programmes', [ProgrammeController::class, 'index'])->name('programmes.index');
+    Route::get('/programmes/{programme}', [ProgrammeController::class, 'show'])->name('programmes.show');
+    Route::get('/programmes/{programme}/lessons', [LessonController::class, 'index'])->name('lessons.index');
+    Route::get('/programmes/{programme}/lessons/{lesson}', [LessonController::class, 'show'])->name('lessons.show');
+    Route::get('/lessons/{lesson}/Quizzezes', [QuizzeController::class, 'index'])->name('Quizzezes.index');
+    Route::get('/lessons/{lesson}/Quizzezes/{Quizze}', [QuizzeController::class, 'show'])->name('Quizzezes.show');
 
     Route::get('/historique', [UserProgressController::class, 'index'])->name('user-progress.index');
     Route::get('/user/programmes/{programme}', [UserProgressController::class, 'show'])->name('programs.show');
     Route::post('/user/programmes/submit', [UserProgressController::class, 'store'])->name('user-progress.store');
-    Route::delete('/historique/{id}', [UserProgressController::class, 'destroy'])->name('user-progress.destroy');
 });
 
 
