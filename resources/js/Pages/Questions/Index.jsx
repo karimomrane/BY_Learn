@@ -1,169 +1,157 @@
-import React from "react";
+import { useState } from "react";
 import { Link, useForm, usePage } from "@inertiajs/react";
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { motion } from "framer-motion";
+import {
+    HiPlus,
+    HiPencil,
+    HiTrash,
+    HiEye,
+    HiQuestionMarkCircle,
+    HiListBullet
+} from 'react-icons/hi2';
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import Button from '@/Components/Button';
+import Card from '@/Components/Card';
+import EmptyState from '@/Components/EmptyState';
+import ConfirmDialog from '@/Components/ConfirmDialog';
+import FlashMessage from '@/Components/FlashMessage';
+import Badge from '@/Components/Badge';
+import Table from '@/Components/Table';
 
 export default function Index() {
-    const { quizze, questions, success } = usePage().props;
+    const { quizze, questions, success, lesson, programme } = usePage().props;
     const { delete: destroy } = useForm();
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [questionToDelete, setQuestionToDelete] = useState(null);
 
-    // Animation variants for Framer Motion
-    const fadeInVariants = {
-        hidden: { opacity: 0 },
-        visible: { opacity: 1, transition: { duration: 0.5 } },
+    const handleDelete = (questionId) => {
+        setQuestionToDelete(questionId);
+        setShowDeleteConfirm(true);
     };
 
-    const tableRowVariants = {
-        hidden: { opacity: 0, y: 20 },
-        visible: { opacity: 1, y: 0 },
-        hover: { scale: 1.02, transition: { duration: 0.2 } },
+    const confirmDelete = () => {
+        if (questionToDelete) {
+            destroy(route("questions.destroy", [quizze.id, questionToDelete]));
+            setQuestionToDelete(null);
+        }
     };
 
     return (
         <AuthenticatedLayout
+            breadcrumbs={[
+                { label: 'Programmes', href: route('programmes.index') },
+                { label: programme?.title || 'Programme', href: route('lessons.index', lesson?.programme_id) },
+                { label: lesson?.title || 'Leçon', href: route('Quizzezes.index', lesson?.id) },
+                { label: 'Questions', href: '#' }
+            ]}
             header={
-                <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200">
-                    Questions for {quizze.instructions}
-                </h2>
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                            Questions du Quiz
+                        </h2>
+                        <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                            {questions.length} question{questions.length !== 1 ? 's' : ''} • {quizze.instructions || 'Sans instructions'}
+                        </p>
+                    </div>
+                    <Link href={route("questions.create", quizze.id)}>
+                        <Button variant="primary">
+                            <HiPlus className="h-5 w-5 mr-2" />
+                            Nouvelle Question
+                        </Button>
+                    </Link>
+                </div>
             }
         >
-            <div className="py-12">
-                <div className="max-w-6xl mx-auto sm:px-6 lg:px-8">
-                    <motion.div
-                        className="bg-white shadow-lg sm:rounded-lg dark:bg-gray-800 p-6"
-                        variants={fadeInVariants}
-                        initial="hidden"
-                        animate="visible"
-                    >
-                        {/* Flash Message */}
-                        {success && (
-                            <motion.div
-                                className="mb-4 p-3 bg-green-100 text-green-700 rounded-md font-bold"
-                                variants={fadeInVariants}
-                                initial="hidden"
-                                animate="visible"
-                            >
-                                {success}
-                            </motion.div>
-                        )}
+            <div className="space-y-6">
+                {success && <FlashMessage type="success" message={success} />}
 
-                        <div className="flex justify-between items-center mb-6">
-                            <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
-                                List of Questions
-                            </h3>
-                            <Link
-                                href={route("questions.create", quizze.id)}
-                                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-all duration-300 transform hover:scale-105"
-                            >
-                                + Add Question
-                            </Link>
-                        </div>
-
-                        {/* Table of Questions */}
-                        <div className="flex flex-col">
-                            <div className="-m-1.5 overflow-x-auto">
-                                <div className="p-1.5 min-w-full inline-block align-middle">
-                                    <div className="overflow-hidden">
-                                        <table className="min-w-full divide-y divide-gray-200 dark:divide-neutral-700">
-                                            <thead>
-                                                <tr>
-                                                    <th
-                                                        scope="col"
-                                                        className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500"
-                                                    >
-                                                        #
-                                                    </th>
-                                                    <th
-                                                        scope="col"
-                                                        className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500"
-                                                    >
-                                                        Question Text
-                                                    </th>
-                                                    <th
-                                                        scope="col"
-                                                        className="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-500"
-                                                    >
-                                                        Actions
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody className="divide-y divide-gray-200 dark:divide-neutral-700">
-                                                {questions.length > 0 ? (
-                                                    questions.map((question, index) => (
-                                                        <motion.tr
-                                                            key={question.id}
-                                                            variants={tableRowVariants}
-                                                            initial="hidden"
-                                                            animate="visible"
-                                                            whileHover="hover"
-                                                            className="hover:bg-gray-50 dark:hover:bg-gray-700"
-                                                        >
-                                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">
-                                                                {index + 1}
-                                                            </td>
-                                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
-                                                                {question.question_text}
-                                                            </td>
-                                                            <td className="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
-                                                                <div className="flex justify-end space-x-2">
-                                                                    <Link
-                                                                        href={route("answers.index", [question.id])}
-                                                                        className="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-none focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-500 dark:hover:text-blue-400 dark:focus:text-blue-400"
-                                                                    >
-                                                                        View Answers
-                                                                    </Link>
-                                                                    <Link
-                                                                        href={route("questions.edit", [quizze.id, question.id])}
-                                                                        className="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-yellow-600 hover:text-yellow-800 focus:outline-none focus:text-yellow-800 disabled:opacity-50 disabled:pointer-events-none dark:text-yellow-500 dark:hover:text-yellow-400 dark:focus:text-yellow-400"
-                                                                    >
-                                                                        Edit
-                                                                    </Link>
-                                                                    <button
-                                                                        onClick={() => {
-                                                                            if (
-                                                                                confirm(
-                                                                                    "Are you sure you want to delete this question?"
-                                                                                )
-                                                                            ) {
-                                                                                destroy(
-                                                                                    route("questions.destroy", [
-                                                                                        quizze.id,
-                                                                                        question.id,
-                                                                                    ])
-                                                                                );
-                                                                            }
-                                                                        }}
-                                                                        className="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-red-600 hover:text-red-800 focus:outline-none focus:text-red-800 disabled:opacity-50 disabled:pointer-events-none dark:text-red-500 dark:hover:text-red-400 dark:focus:text-red-400"
-                                                                    >
-                                                                        Delete
-                                                                    </button>
-                                                                </div>
-                                                            </td>
-                                                        </motion.tr>
-                                                    ))
-                                                ) : (
-                                                    <motion.tr
-                                                        variants={fadeInVariants}
-                                                        initial="hidden"
-                                                        animate="visible"
-                                                    >
-                                                        <td
-                                                            colSpan="3"
-                                                            className="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500"
-                                                        >
-                                                            No questions found.
-                                                        </td>
-                                                    </motion.tr>
-                                                )}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </motion.div>
-                </div>
+                {questions.length === 0 ? (
+                    <Card>
+                        <EmptyState
+                            icon={HiQuestionMarkCircle}
+                            title="Aucune question"
+                            description="Ce quiz n'a pas encore de questions. Commencez par créer la première question."
+                            action={() => window.location.href = route("questions.create", quizze.id)}
+                            actionLabel="Créer une Question"
+                        />
+                    </Card>
+                ) : (
+                    <Card>
+                        <Table>
+                            <Table.Header>
+                                <Table.Row>
+                                    <Table.HeaderCell className="w-24">#</Table.HeaderCell>
+                                    <Table.HeaderCell>Question</Table.HeaderCell>
+                                    <Table.HeaderCell align="right" className="w-80">Actions</Table.HeaderCell>
+                                </Table.Row>
+                            </Table.Header>
+                            <Table.Body>
+                                {questions.map((question, index) => (
+                                    <motion.tr
+                                        key={question.id}
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ duration: 0.2, delay: index * 0.05 }}
+                                        className="group hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-150"
+                                    >
+                                        <Table.Cell>
+                                            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-terracotta-500 to-mocha-500 text-white font-bold text-base shadow-md">
+                                                {index + 1}
+                                            </div>
+                                        </Table.Cell>
+                                        <Table.Cell>
+                                            <div className="flex items-start py-1">
+                                                <HiQuestionMarkCircle className="h-6 w-6 text-terracotta-500 dark:text-terracotta-400 mt-0.5 mr-3 flex-shrink-0" />
+                                                <p className="text-base text-gray-900 dark:text-white leading-relaxed">
+                                                    {question.question_text}
+                                                </p>
+                                            </div>
+                                        </Table.Cell>
+                                        <Table.Cell align="right">
+                                            <div className="flex items-center justify-end gap-2">
+                                                <Link href={route("answers.index", question.id)}>
+                                                    <Button variant="primary" size="sm">
+                                                        <HiListBullet className="h-4 w-4 mr-1.5" />
+                                                        Réponses
+                                                    </Button>
+                                                </Link>
+                                                <Link href={route("questions.edit", [quizze.id, question.id])}>
+                                                    <Button variant="secondary" size="sm">
+                                                        <HiPencil className="h-4 w-4" />
+                                                    </Button>
+                                                </Link>
+                                                <Button
+                                                    variant="danger"
+                                                    size="sm"
+                                                    onClick={() => handleDelete(question.id)}
+                                                >
+                                                    <HiTrash className="h-4 w-4" />
+                                                </Button>
+                                            </div>
+                                        </Table.Cell>
+                                    </motion.tr>
+                                ))}
+                            </Table.Body>
+                        </Table>
+                    </Card>
+                )}
             </div>
+
+            {/* Delete Confirmation Dialog */}
+            <ConfirmDialog
+                show={showDeleteConfirm}
+                title="Supprimer la question"
+                message="Êtes-vous sûr de vouloir supprimer cette question ? Toutes les réponses associées seront également supprimées."
+                confirmText="Supprimer"
+                cancelText="Annuler"
+                type="danger"
+                onConfirm={confirmDelete}
+                onCancel={() => {
+                    setShowDeleteConfirm(false);
+                    setQuestionToDelete(null);
+                }}
+            />
         </AuthenticatedLayout>
     );
 }

@@ -82,7 +82,7 @@ export default function Edit({ programme }) {
                                     onChange={(e) => setData('title', e.target.value)}
                                     className="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm"
                                 />
-                                {errors.title && <p className="mt-1 text-sm text-red-600">{errors.title}</p>}
+                                {errors.title && <p className="mt-1 text-sm text-terracotta-600">{errors.title}</p>}
                             </div>
 
                             {/* Description Field */}
@@ -97,7 +97,7 @@ export default function Edit({ programme }) {
                                     className="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white sm:text-sm"
                                     rows={4}
                                 />
-                                {errors.description && <p className="mt-1 text-sm text-red-600">{errors.description}</p>}
+                                {errors.description && <p className="mt-1 text-sm text-terracotta-600">{errors.description}</p>}
                             </div>
 
                             {/* Controle Field - Now a Switch */}
@@ -194,7 +194,7 @@ export default function Edit({ programme }) {
                                         )}
                                     </div>
                                 </div>
-                                {errors.image_path && <p className="mt-1 text-sm text-red-600">{errors.image_path}</p>}
+                                {errors.image_path && <p className="mt-1 text-sm text-terracotta-600">{errors.image_path}</p>}
                             </div>
 
                             {/* Form Actions */}

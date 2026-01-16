@@ -13,7 +13,7 @@ class QuizzePolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return true; // All authenticated users can view quizzes
     }
 
     /**
@@ -21,7 +21,7 @@ class QuizzePolicy
      */
     public function view(User $user, Quizze $quizze): bool
     {
-        return false;
+        return true; // All authenticated users can view a quiz
     }
 
     /**
@@ -29,7 +29,7 @@ class QuizzePolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 
     /**
@@ -37,7 +37,7 @@ class QuizzePolicy
      */
     public function update(User $user, Quizze $quizze): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 
     /**
@@ -45,7 +45,7 @@ class QuizzePolicy
      */
     public function delete(User $user, Quizze $quizze): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 
     /**

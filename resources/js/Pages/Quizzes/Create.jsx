@@ -28,7 +28,7 @@ export default function Create({ lesson }) {
                                     value={data.instructions}
                                     onChange={(e) => setData("instructions", e.target.value)}
                                 ></textarea>
-                                {errors.instructions && <p className="text-red-500 text-sm mt-1">{errors.instructions}</p>}
+                                {errors.instructions && <p className="text-terracotta-500 text-sm mt-1">{errors.instructions}</p>}
                             </div>
 
                             <div className="flex justify-between">

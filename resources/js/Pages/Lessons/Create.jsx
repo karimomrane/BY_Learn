@@ -174,7 +174,7 @@ export default function Create({ programme }) {
                   className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   required
                 />
-                {errors.title && <p className="text-red-500 text-sm">{errors.title}</p>}
+                {errors.title && <p className="text-terracotta-500 text-sm">{errors.title}</p>}
               </div>
 
               {/* Description */}
@@ -188,7 +188,7 @@ export default function Create({ programme }) {
                   onChange={handleChange}
                   className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                 />
-                {errors.description && <p className="text-red-500 text-sm">{errors.description}</p>}
+                {errors.description && <p className="text-terracotta-500 text-sm">{errors.description}</p>}
               </div>
 
               {/* Image DropZone */}
@@ -203,7 +203,7 @@ export default function Create({ programme }) {
                   icon={FaImage}
                   onFileDrop={handleImageDrop}
                 />
-                {errors.image && <p className="text-red-500 text-sm">{errors.image}</p>}
+                {errors.image && <p className="text-terracotta-500 text-sm">{errors.image}</p>}
               </div>
 
               {/* Video DropZone */}
@@ -218,7 +218,7 @@ export default function Create({ programme }) {
                   icon={FaVideo}
                   onFileDrop={handleVideoDrop}
                 />
-                {errors.video && <p className="text-red-500 text-sm">{errors.video}</p>}
+                {errors.video && <p className="text-terracotta-500 text-sm">{errors.video}</p>}
               </div>
 
               {/* Bouton Ajouter */}

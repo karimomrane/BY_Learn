@@ -36,6 +36,12 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
                 'score'=> User_progress::where('user_id', $request->user()?->id)->sum('score')
             ],
+            'flash' => [
+                'success' => $request->session()->get('success'),
+                'error' => $request->session()->get('error'),
+                'info' => $request->session()->get('info'),
+                'warning' => $request->session()->get('warning'),
+            ],
         ];
     }
 }

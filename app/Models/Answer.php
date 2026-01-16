@@ -12,6 +12,19 @@ class Answer extends Model
 
     protected $fillable = ['question_id','answer_text','is_correct'];
 
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'is_correct' => 'boolean',
+            'question_id' => 'integer',
+        ];
+    }
+
     public function question()
     {
         return $this->belongsTo(Question::class);

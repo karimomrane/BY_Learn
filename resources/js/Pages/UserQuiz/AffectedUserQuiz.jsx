@@ -246,7 +246,7 @@ const AffectedUserQuiz = ({ quizzes, initialQuiz, initialAssignedUsers = [], ini
                                             disabled={selectedAssigned.length === 0 || isProcessing}
                                             className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm ${
                                                 selectedAssigned.length > 0
-                                                    ? 'bg-red-600 hover:bg-red-700 text-white'
+                                                    ? 'bg-terracotta-600 hover:bg-terracotta-700 text-white'
                                                     : 'bg-gray-200 dark:bg-gray-600 text-gray-500 dark:text-gray-300 cursor-not-allowed'
                                             }`}
                                         >
@@ -378,7 +378,7 @@ const AffectedUserQuiz = ({ quizzes, initialQuiz, initialAssignedUsers = [], ini
                                                         whileHover={{ backgroundColor: '#f5f7fa' }}
                                                         className={`px-4 py-3 flex items-center cursor-pointer ${
                                                             selectedUnassigned.some(u => u.id === user.id)
-                                                                ? 'bg-indigo-50 dark:bg-indigo-900/50'
+                                                                ? 'bg-beige-200 dark:bg-terracotta-900'
                                                                 : 'bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700'
                                                         }`}
                                                         onClick={() => toggleUnassignedSelection(user)}
@@ -387,7 +387,7 @@ const AffectedUserQuiz = ({ quizzes, initialQuiz, initialAssignedUsers = [], ini
                                                             type="checkbox"
                                                             checked={selectedUnassigned.some(u => u.id === user.id)}
                                                             onChange={() => toggleUnassignedSelection(user)}
-                                                            className="h-4 w-4 text-indigo-600 dark:text-indigo-400 focus:ring-indigo-500 dark:focus:ring-indigo-400 border-gray-300 dark:border-gray-600 rounded mr-3"
+                                                            className="h-4 w-4 text-indigo-600 dark:text-indigo-400 focus:ring-terracotta-500 dark:focus:ring-terracotta-400 border-gray-300 dark:border-gray-600 rounded mr-3"
                                                         />
                                                         <div className="flex-1 min-w-0">
                                                             <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
@@ -429,7 +429,7 @@ const AffectedUserQuiz = ({ quizzes, initialQuiz, initialAssignedUsers = [], ini
                                         </h3>
                                         <div className="flex items-center space-x-2">
                                             {selectedAssigned.length > 0 && (
-                                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-100">
+                                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-beige-200 dark:bg-terracotta-900 text-mocha-700 dark:text-terracotta-100">
                                                     {selectedAssigned.length} selected
                                                 </span>
                                             )}
@@ -458,7 +458,7 @@ const AffectedUserQuiz = ({ quizzes, initialQuiz, initialAssignedUsers = [], ini
                                                         whileHover={{ backgroundColor: '#f5f7fa' }}
                                                         className={`px-4 py-3 flex items-center cursor-pointer ${
                                                             selectedAssigned.some(u => u.id === user.id)
-                                                                ? 'bg-red-50 dark:bg-red-900/50'
+                                                                ? 'bg-beige-200 dark:bg-terracotta-900/50'
                                                                 : 'bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700'
                                                         }`}
                                                         onClick={() => toggleAssignedSelection(user)}
@@ -467,7 +467,7 @@ const AffectedUserQuiz = ({ quizzes, initialQuiz, initialAssignedUsers = [], ini
                                                             type="checkbox"
                                                             checked={selectedAssigned.some(u => u.id === user.id)}
                                                             onChange={() => toggleAssignedSelection(user)}
-                                                            className="h-4 w-4 text-red-600 dark:text-red-400 focus:ring-red-500 dark:focus:ring-red-400 border-gray-300 dark:border-gray-600 rounded mr-3"
+                                                            className="h-4 w-4 text-terracotta-600 dark:text-terracotta-400 focus:ring-terracotta-500 dark:focus:ring-terracotta-400 border-gray-300 dark:border-gray-600 rounded mr-3"
                                                         />
                                                         <div className="flex-1 min-w-0">
                                                             <p className="text-sm font-medium text-gray-900 dark:text-white truncate">

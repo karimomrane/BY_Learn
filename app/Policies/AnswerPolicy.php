@@ -13,7 +13,7 @@ class AnswerPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return true; // All authenticated users can view answers
     }
 
     /**
@@ -21,7 +21,7 @@ class AnswerPolicy
      */
     public function view(User $user, Answer $answer): bool
     {
-        return false;
+        return true; // All authenticated users can view an answer
     }
 
     /**
@@ -29,7 +29,7 @@ class AnswerPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 
     /**
@@ -37,7 +37,7 @@ class AnswerPolicy
      */
     public function update(User $user, Answer $answer): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 
     /**
@@ -45,7 +45,7 @@ class AnswerPolicy
      */
     public function delete(User $user, Answer $answer): bool
     {
-        return false;
+        return $user->role === 'admin';
     }
 
     /**

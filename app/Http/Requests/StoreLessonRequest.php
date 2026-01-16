@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\ValidationRules;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreLessonRequest extends FormRequest
@@ -11,7 +12,7 @@ class StoreLessonRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return $this->user()->can('create', \App\Models\Lesson::class);
     }
 
     /**
@@ -22,7 +23,18 @@ class StoreLessonRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'title'       => ValidationRules::title(),
+            'description' => ValidationRules::description(),
+            'image'       => ValidationRules::image(),
+            'video'       => ValidationRules::video(),
         ];
+    }
+
+    /**
+     * Get custom error messages for validation rules.
+     */
+    public function messages(): array
+    {
+        return ValidationRules::messages();
     }
 }

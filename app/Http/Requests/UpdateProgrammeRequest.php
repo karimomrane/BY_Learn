@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\ValidationRules;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateProgrammeRequest extends FormRequest
@@ -11,7 +12,7 @@ class UpdateProgrammeRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return $this->user()->can('update', $this->route('programme'));
     }
 
     /**
@@ -22,7 +23,19 @@ class UpdateProgrammeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'title'       => ValidationRules::title(),
+            'description' => ValidationRules::description(),
+            'image_path'  => ValidationRules::image(),
+            'controle'    => 'nullable|boolean',
+            ...ValidationRules::dateRange(),
         ];
+    }
+
+    /**
+     * Get custom error messages for validation rules.
+     */
+    public function messages(): array
+    {
+        return ValidationRules::messages();
     }
 }

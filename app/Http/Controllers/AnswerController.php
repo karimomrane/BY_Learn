@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Traits\HasCrudResponses;
 use App\Models\Answer;
 use App\Models\Question;
 use Inertia\Inertia;
@@ -9,6 +10,7 @@ use Illuminate\Http\Request;
 
 class AnswerController extends Controller
 {
+    use HasCrudResponses;
     /**
      * Display a listing of answers for a given question.
      */
@@ -40,7 +42,7 @@ class AnswerController extends Controller
      */
     public function store(Request $request, $questionId)
     {
-        $question = Question::findOrFail($questionId);
+        $question = Question::with('quizze')->findOrFail($questionId);
 
         $request->validate([
             'answer_text' => 'required|string',
@@ -51,8 +53,7 @@ class AnswerController extends Controller
         $answer->question_id = $question->id;
         $answer->save();
 
-        return redirect()->route('answers.index', $question->id)
-            ->with('success', 'Answer created successfully.');
+        return $this->successResponse('Quizzezes.index', ['lesson' => $question->quizze->lesson_id], 'Answer created successfully.');
     }
 
     /**
@@ -85,7 +86,7 @@ class AnswerController extends Controller
      */
     public function update(Request $request, $questionId, $answerid)
     {
-        $question = Question::findOrFail($questionId);
+        $question = Question::with('quizze')->findOrFail($questionId);
         $answer = Answer::findOrFail($answerid);
         $request->validate([
             'answer_text' => 'required|string',
@@ -94,8 +95,7 @@ class AnswerController extends Controller
 
         $answer->update($request->all());
 
-        return redirect()->route('answers.index', $question->id)
-            ->with('success', 'Answer updated successfully.');
+        return $this->successResponse('Quizzezes.index', ['lesson' => $question->quizze->lesson_id], 'Answer updated successfully.');
     }
 
     /**
@@ -103,10 +103,10 @@ class AnswerController extends Controller
      */
     public function destroy($questionId, $answerid)
     {
+        $question = Question::with('quizze')->findOrFail($questionId);
         $answer = Answer::findOrFail($answerid);
         $answer->delete();
 
-        return redirect()->route('answers.index', $questionId)
-            ->with('success', 'Answer deleted successfully.');
+        return $this->successResponse('Quizzezes.index', ['lesson' => $question->quizze->lesson_id], 'Answer deleted successfully.');
     }
 }

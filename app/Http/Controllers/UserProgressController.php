@@ -15,16 +15,98 @@ use Inertia\Inertia;
 
 class UserProgressController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        if (Auth::user()->role === 'admin') {
-            $userprogress = User_progress::with('lesson', 'quizze', 'user')->orderBy('created_at', 'desc')->get();
-        } else {
-            $userprogress = User_progress::with('lesson', 'quizze', 'user')->where('user_id', Auth::id())->orderBy('created_at', 'desc')->get();
+        $query = User_progress::with(['lesson:id,title', 'quizze:id,instructions', 'user:id,name']);
+
+        // Role-based filtering
+        if (Auth::user()->role !== 'admin') {
+            $query->where('user_id', Auth::id());
         }
 
+        // Search filter
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('user', function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%");
+                })
+                ->orWhereHas('lesson', function ($q) use ($search) {
+                    $q->where('title', 'like', "%{$search}%");
+                })
+                ->orWhereHas('quizze', function ($q) use ($search) {
+                    $q->where('instructions', 'like', "%{$search}%");
+                });
+            });
+        }
+
+        // User filter
+        if ($request->filled('user_id')) {
+            $query->where('user_id', $request->user_id);
+        }
+
+        // Lesson filter
+        if ($request->filled('lesson_id')) {
+            $query->where('lesson_id', $request->lesson_id);
+        }
+
+        // Score range filter
+        if ($request->filled('min_score')) {
+            $query->where('score', '>=', $request->min_score);
+        }
+        if ($request->filled('max_score')) {
+            $query->where('score', '<=', $request->max_score);
+        }
+
+        // Date range filter
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        // Sorting
+        $sortBy = $request->get('sort_by', 'created_at');
+        $sortDirection = $request->get('sort_direction', 'desc');
+
+        // Handle nested sorting (e.g., user.name, lesson.title)
+        if (str_contains($sortBy, '.')) {
+            [$relation, $column] = explode('.', $sortBy);
+
+            if ($relation === 'user') {
+                $query->join('users', 'user_progress.user_id', '=', 'users.id')
+                    ->select('user_progress.*')
+                    ->orderBy("users.{$column}", $sortDirection);
+            } elseif ($relation === 'lesson') {
+                $query->leftJoin('lessons', 'user_progress.lesson_id', '=', 'lessons.id')
+                    ->select('user_progress.*')
+                    ->orderBy("lessons.{$column}", $sortDirection);
+            } elseif ($relation === 'quizze') {
+                $query->join('quizzes', 'user_progress.quiz_id', '=', 'quizzes.id')
+                    ->select('user_progress.*')
+                    ->orderBy("quizzes.{$column}", $sortDirection);
+            }
+        } else {
+            $query->orderBy($sortBy, $sortDirection);
+        }
+
+        // Pagination
+        $perPage = $request->get('per_page', 10);
+        $userprogress = $query->paginate($perPage)->appends($request->query());
+
+        // Get filter options for dropdowns
+        $users = Auth::user()->role === 'admin'
+            ? User::select('id', 'name')->orderBy('name')->get()
+            : collect([]);
+
+        $lessons = Lesson::select('id', 'title')->orderBy('title')->get();
+
         return Inertia::render('Historique', [
-            'userprogress' => $userprogress
+            'userprogress' => $userprogress,
+            'filters' => $request->only(['search', 'user_id', 'lesson_id', 'min_score', 'max_score', 'date_from', 'date_to', 'sort_by', 'sort_direction', 'per_page']),
+            'users' => $users,
+            'lessons' => $lessons,
         ]);
     }
 
@@ -37,11 +119,17 @@ class UserProgressController extends Controller
         $tentatives = User_progress::count();
         $pointsemis = User_progress::sum('score');
         $totalpoints = Question::count() * 10;
-        $lasttentatives = User_progress::with('user', 'quizze')->latest()->take(5)->get();
-        $classementbyuser = User_progress::with('user')->selectRaw('user_id, sum(score) as total_score')
+        $lasttentatives = User_progress::with(['user:id,name', 'quizze:id'])
+            ->latest()
+            ->take(5)
+            ->get();
+        $classementbyuser = User_progress::with('user:id,name')
+            ->selectRaw('user_id, sum(score) as total_score')
             ->groupBy('user_id')
             ->orderByDesc('total_score')
+            ->limit(10)
             ->get();
+
         return Inertia::render('Dashboard', [
             'totalusers' => $totalusers,
             'useractif' => $useractif,

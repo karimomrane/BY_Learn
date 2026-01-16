@@ -1,7 +1,14 @@
 import React, { useState } from "react";
-import { useForm, usePage } from "@inertiajs/react";
+import { useForm, usePage, Link } from "@inertiajs/react";
 import { motion, AnimatePresence } from "framer-motion";
+import { HiPlus, HiPencil, HiTrash, HiCheckCircle, HiXCircle, HiArrowLeft } from 'react-icons/hi2';
+import { Switch } from '@headlessui/react';
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import Button from '@/Components/Button';
+import Card from '@/Components/Card';
+import Badge from '@/Components/Badge';
+import Table from '@/Components/Table';
+import EmptyState from '@/Components/EmptyState';
 import '../styles.css';
 
 export default function Index() {
@@ -85,22 +92,34 @@ export default function Index() {
 
     return (
         <AuthenticatedLayout
+            breadcrumbs={[
+                { label: 'Questions', href: '#' },
+                { label: question.question_text.substring(0, 50) + '...', href: '#' },
+                { label: 'Réponses', href: '#' }
+            ]}
             header={
-                <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200">
-                    Answers for Question: {question.question_text}
-                </h2>
+                <div className="flex flex-col gap-2">
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                        Gestion des Réponses
+                    </h2>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                        Question: {question.question_text}
+                    </p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                        {answers.length} réponse{answers.length !== 1 ? 's' : ''} disponible{answers.length !== 1 ? 's' : ''}
+                    </p>
+                </div>
             }
         >
-            <div className="py-12">
-                <div className="max-w-6xl mx-auto sm:px-6 lg:px-8 space-y-6">
-                    {/* Create Answer Form */}
-                    <motion.div
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
-                        className="bg-gradient-to-r from-blue-500 to-purple-500 p-6 rounded-lg shadow-lg"
-                    >
-                        <form onSubmit={handleCreate} className="mb-4">
+            <div className="space-y-6">
+                {/* Create Answer Form */}
+                <Card gradient>
+                    <div className="bg-gradient-to-r from-terracotta-500 to-mocha-500 p-6">
+                        <h3 className="text-xl font-bold text-white mb-4 flex items-center">
+                            <HiPlus className="h-6 w-6 mr-2" />
+                            Nouvelle Réponse
+                        </h3>
+                        <form onSubmit={handleCreate} className="space-y-4">
                             <div>
                                 <input
                                     type="text"
@@ -109,195 +128,206 @@ export default function Index() {
                                     onChange={(e) =>
                                         setCreateData("answer_text", e.target.value)
                                     }
-                                    className="w-full p-3 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                    placeholder="Enter answer text"
+                                    className="w-full px-4 py-3 border-0 rounded-lg shadow-sm focus:ring-2 focus:ring-white/50 dark:bg-gray-700 dark:text-gray-200"
+                                    placeholder="Entrez le texte de la réponse"
                                 />
                                 {createErrors.answer_text && (
-                                    <div className="text-red-500 text-sm mt-1">
+                                    <div className="text-white bg-terracotta-800/50 rounded px-3 py-1 text-sm mt-2">
                                         {createErrors.answer_text}
                                     </div>
                                 )}
                             </div>
-                            <div className="mt-3 flex items-center">
-                                <label className="switch flex items-center mr-2">
-                                    <input
-                                        type="checkbox"
-                                        name="is_correct"
-                                        checked={createData.is_correct}
-                                        onChange={(e) =>
-                                            setCreateData("is_correct", e.target.checked)
-                                        }
-                                    />
-                                    <span className="slider"></span>
-                                </label>
-                                <span className="text-white dark:text-gray-200">
-                                    Mark as correct
+                            <div className="flex items-center justify-between bg-white/10 rounded-lg px-4 py-3">
+                                <span className="text-white font-medium">
+                                    Marquer comme correcte
                                 </span>
+                                <Switch
+                                    checked={createData.is_correct}
+                                    onChange={(checked) => setCreateData("is_correct", checked)}
+                                    className={`${
+                                        createData.is_correct ? 'bg-white' : 'bg-white/30'
+                                    } relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-white/50`}
+                                >
+                                    <span
+                                        className={`${
+                                            createData.is_correct ? 'translate-x-6 bg-terracotta-500' : 'translate-x-1 bg-gray-400'
+                                        } inline-block h-4 w-4 transform rounded-full transition-transform`}
+                                    />
+                                </Switch>
                             </div>
-                            <motion.button
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
+                            <Button
                                 type="submit"
                                 disabled={createProcessing}
-                                className="mt-4 w-full px-4 py-2 text-white bg-blue-700 rounded-md disabled:bg-gray-400"
+                                className="w-full bg-white hover:bg-gray-100 text-terracotta-600 font-semibold py-3 shadow-lg"
                             >
-                                {createProcessing ? "Creating..." : "Create Answer"}
-                            </motion.button>
+                                {createProcessing ? "Création..." : "Créer la Réponse"}
+                            </Button>
                         </form>
-                    </motion.div>
+                    </div>
+                </Card>
 
-                    {/* Answer List as Table */}
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="bg-white dark:bg-gray-800 shadow-md sm:rounded-lg overflow-x-auto"
-                    >
-                        {answers.length === 0 ? (
-                            <p className="text-center text-gray-600 dark:text-gray-400 p-4">
-                                No answers available for this question.
-                            </p>
-                        ) : (
-                            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
-                                <thead className="bg-gray-50 dark:bg-gray-700">
-                                    <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Answer
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Correct?
-                                        </th>
-                                        <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Edit
-                                        </th>
-                                        <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Delete
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-600">
-                                    <AnimatePresence>
-                                        {answers.map((answer) => (
-                                            <motion.tr
-                                                key={answer.id}
-                                                variants={rowVariants}
-                                                initial="hidden"
-                                                animate="visible"
-                                                exit="hidden"
-                                                transition={{ duration: 0.3 }}
-                                            >
-                                                <td className="px-6 py-4 whitespace-nowrap text-gray-800 dark:text-gray-200">
-                                                    {answer.answer_text}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    {answer.is_correct ? (
-                                                        <span className="inline-flex items-center px-3 py-1 text-xs font-semibold text-green-800 bg-green-100 rounded-full">
-                                                            Correct
-                                                        </span>
+                {/* Answer List */}
+                {answers.length === 0 ? (
+                    <Card>
+                        <EmptyState
+                            icon={HiCheckCircle}
+                            title="Aucune réponse"
+                            description="Cette question n'a pas encore de réponses. Créez la première réponse ci-dessus."
+                        />
+                    </Card>
+                ) : (
+                    <Card>
+                        <Table>
+                            <Table.Header>
+                                <Table.Row>
+                                    <Table.HeaderCell className="w-16">#</Table.HeaderCell>
+                                    <Table.HeaderCell>Réponse</Table.HeaderCell>
+                                    <Table.HeaderCell className="w-32" align="center">Statut</Table.HeaderCell>
+                                    <Table.HeaderCell className="w-48" align="right">Actions</Table.HeaderCell>
+                                </Table.Row>
+                            </Table.Header>
+                            <Table.Body>
+                                {answers.map((answer, index) => (
+                                    <motion.tr
+                                        key={answer.id}
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ duration: 0.2, delay: index * 0.05 }}
+                                        className="group hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-150"
+                                    >
+                                        <Table.Cell>
+                                            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-terracotta-500 to-mocha-500 text-white font-bold text-sm">
+                                                {index + 1}
+                                            </div>
+                                        </Table.Cell>
+                                        <Table.Cell>
+                                            <p className="text-base text-gray-900 dark:text-white">
+                                                {answer.answer_text}
+                                            </p>
+                                        </Table.Cell>
+                                        <Table.Cell align="center">
+                                            {answer.is_correct ? (
+                                                <Badge variant="success" icon={HiCheckCircle} size="md">
+                                                    Correcte
+                                                </Badge>
+                                            ) : (
+                                                <Badge variant="danger" icon={HiXCircle} size="md">
+                                                    Incorrecte
+                                                </Badge>
+                                            )}
+                                        </Table.Cell>
+                                        <Table.Cell align="right">
+                                            <div className="flex items-center justify-end gap-2">
+                                                <Button
+                                                    variant="secondary"
+                                                    size="sm"
+                                                    onClick={() => handleOpenModal(answer)}
+                                                >
+                                                    <HiPencil className="h-4 w-4" />
+                                                </Button>
+                                                <Button
+                                                    variant={deleteConfirmation === answer.id ? "warning" : "danger"}
+                                                    size="sm"
+                                                    onClick={() => handleDelete(answer.id)}
+                                                >
+                                                    {deleteConfirmation === answer.id ? (
+                                                        <>
+                                                            <HiCheckCircle className="h-4 w-4 mr-1" />
+                                                            Confirmer
+                                                        </>
                                                     ) : (
-                                                        <span className="inline-flex items-center px-3 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">
-                                                            Incorrect
-                                                        </span>
+                                                        <HiTrash className="h-4 w-4" />
                                                     )}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-center">
-                                                    <motion.button
-                                                        whileHover={{ scale: 1.05 }}
-                                                        onClick={() => handleOpenModal(answer)}
-                                                        className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-200 focus:outline-none shadow-md"
-                                                    >
-                                                        Edit
-                                                    </motion.button>
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-center">
-                                                    <motion.button
-                                                        whileHover={{ scale: 1.05 }}
-                                                        onClick={() => handleDelete(answer.id)}
-                                                        className={`px-4 py-2 rounded-lg transition duration-200 focus:outline-none shadow-md ${deleteConfirmation === answer.id
-                                                                ? "bg-yellow-500 hover:bg-yellow-600 text-white"
-                                                                : "bg-red-500 hover:bg-red-600 text-white"
-                                                            }`}
-                                                    >
-                                                        {deleteConfirmation === answer.id ? "Confirm Delete" : "Delete"}
-                                                    </motion.button>
-                                                </td>
-
-                                            </motion.tr>
-                                        ))}
-                                    </AnimatePresence>
-                                </tbody>
-                            </table>
-                        )}
-                    </motion.div>
-                </div>
+                                                </Button>
+                                            </div>
+                                        </Table.Cell>
+                                    </motion.tr>
+                                ))}
+                            </Table.Body>
+                        </Table>
+                    </Card>
+                )}
             </div>
 
-            {/* Modal for Editing Answer */}
+            {/* Edit Modal */}
             <AnimatePresence>
                 {isModalOpen && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50"
+                        className="fixed inset-0 bg-black/70 backdrop-blur-sm flex justify-center items-center z-50 p-4"
+                        onClick={handleCloseModal}
                     >
                         <motion.div
-                            initial={{ scale: 0.8 }}
-                            animate={{ scale: 1 }}
-                            exit={{ scale: 0.8 }}
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.9, opacity: 0 }}
                             transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                            className="bg-white dark:bg-gray-800 p-8 rounded-lg w-96 shadow-2xl"
+                            className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-lg"
+                            onClick={(e) => e.stopPropagation()}
                         >
-                            <h3 className="text-xl font-semibold mb-4 dark:text-gray-200">
-                                Edit Answer
-                            </h3>
-                            <form onSubmit={(e) => handleEdit(e, selectedAnswer.id)}>
-                                <input
-                                    type="text"
-                                    name="answer_text"
-                                    value={editData.answer_text}
-                                    onChange={(e) =>
-                                        setEditData("answer_text", e.target.value)
-                                    }
-                                    className="w-full p-3 border border-gray-300 rounded-md mb-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                />
-                                {editErrors.answer_text && (
-                                    <div className="text-red-500 text-sm mb-2">
-                                        {editErrors.answer_text}
-                                    </div>
-                                )}
-                                <div className="mt-2 flex items-center">
-                                    <label className="switch flex items-center mr-2">
-                                        <input
-                                            type="checkbox"
-                                            name="is_correct"
-                                            checked={editData.is_correct}
-                                            onChange={(e) =>
-                                                setEditData("is_correct", e.target.checked)
-                                            }
-                                        />
-                                        <span className="slider"></span>
+                            <div className="bg-gradient-to-r from-terracotta-500 to-mocha-500 px-6 py-4 rounded-t-xl">
+                                <h3 className="text-xl font-bold text-white flex items-center">
+                                    <HiPencil className="h-6 w-6 mr-2" />
+                                    Modifier la Réponse
+                                </h3>
+                            </div>
+                            <form onSubmit={(e) => handleEdit(e, selectedAnswer.id)} className="p-6 space-y-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Texte de la réponse
                                     </label>
-                                    <span className="dark:text-gray-200">
-                                        Mark as correct
-                                    </span>
+                                    <input
+                                        type="text"
+                                        name="answer_text"
+                                        value={editData.answer_text}
+                                        onChange={(e) =>
+                                            setEditData("answer_text", e.target.value)
+                                        }
+                                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-terracotta-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-200"
+                                    />
+                                    {editErrors.answer_text && (
+                                        <div className="text-terracotta-600 dark:text-terracotta-400 text-sm mt-2">
+                                            {editErrors.answer_text}
+                                        </div>
+                                    )}
                                 </div>
-                                <div className="mt-4 flex justify-between">
-                                    <motion.button
-                                        whileHover={{ scale: 1.05 }}
+                                <div className="flex items-center justify-between bg-gray-50 dark:bg-gray-700 rounded-lg px-4 py-3">
+                                    <span className="text-gray-700 dark:text-gray-300 font-medium">
+                                        Marquer comme correcte
+                                    </span>
+                                    <Switch
+                                        checked={editData.is_correct}
+                                        onChange={(checked) => setEditData("is_correct", checked)}
+                                        className={`${
+                                            editData.is_correct ? 'bg-gradient-to-r from-terracotta-500 to-mocha-500' : 'bg-gray-300 dark:bg-gray-600'
+                                        } relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-terracotta-500 focus:ring-offset-2`}
+                                    >
+                                        <span
+                                            className={`${
+                                                editData.is_correct ? 'translate-x-6' : 'translate-x-1'
+                                            } inline-block h-4 w-4 transform rounded-full bg-white transition-transform shadow-md`}
+                                        />
+                                    </Switch>
+                                </div>
+                                <div className="flex gap-3 pt-4">
+                                    <Button
                                         type="button"
                                         onClick={handleCloseModal}
-                                        className="px-4 py-2 text-white bg-gray-500 rounded-md"
+                                        variant="secondary"
+                                        className="flex-1"
                                     >
-                                        Cancel
-                                    </motion.button>
-                                    <motion.button
-                                        whileHover={{ scale: 1.05 }}
+                                        Annuler
+                                    </Button>
+                                    <Button
                                         type="submit"
                                         disabled={editProcessing}
-                                        className="px-4 py-2 text-white bg-blue-700 rounded-md disabled:bg-gray-400"
+                                        variant="primary"
+                                        className="flex-1"
                                     >
-                                        {editProcessing ? "Updating..." : "Update Answer"}
-                                    </motion.button>
+                                        {editProcessing ? "Mise à jour..." : "Mettre à jour"}
+                                    </Button>
                                 </div>
                             </form>
                         </motion.div>

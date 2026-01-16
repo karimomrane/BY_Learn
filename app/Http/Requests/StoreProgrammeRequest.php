@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\ValidationRules;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreProgrammeRequest extends FormRequest
@@ -11,7 +12,7 @@ class StoreProgrammeRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return $this->user()->can('create', \App\Models\Programme::class);
     }
 
     /**
@@ -22,7 +23,19 @@ class StoreProgrammeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'title'       => ValidationRules::title(),
+            'description' => ValidationRules::description(),
+            'image_path'  => ValidationRules::image(),
+            'controle'    => ValidationRules::boolean(),
+            ...ValidationRules::dateRange(),
         ];
+    }
+
+    /**
+     * Get custom error messages for validation rules.
+     */
+    public function messages(): array
+    {
+        return ValidationRules::messages();
     }
 }

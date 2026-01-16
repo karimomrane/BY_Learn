@@ -11,7 +11,7 @@ class StoreQuestionRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return $this->user()->can('create', \App\Models\Question::class);
     }
 
     /**
@@ -22,7 +22,7 @@ class StoreQuestionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'question_text' => 'required|string|max:1000',
         ];
     }
 }

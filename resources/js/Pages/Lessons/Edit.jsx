@@ -108,7 +108,7 @@ export default function Edit({ programme, lesson }) {
                                     required
                                 />
                                 {errors.title && (
-                                    <p className="mt-1 text-sm text-red-600">{errors.title}</p>
+                                    <p className="mt-1 text-sm text-terracotta-600">{errors.title}</p>
                                 )}
                             </div>
 
@@ -124,7 +124,7 @@ export default function Edit({ programme, lesson }) {
                                     rows={5}
                                 />
                                 {errors.description && (
-                                    <p className="mt-1 text-sm text-red-600">{errors.description}</p>
+                                    <p className="mt-1 text-sm text-terracotta-600">{errors.description}</p>
                                 )}
                             </div>
 
@@ -151,7 +151,7 @@ export default function Edit({ programme, lesson }) {
                                                     e.stopPropagation();
                                                     removeImage();
                                                 }}
-                                                className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                                                className="absolute top-2 right-2 bg-terracotta-500 text-white rounded-full p-1 hover:bg-terracotta-600"
                                             >
                                                 <svg
                                                     xmlns="http://www.w3.org/2000/svg"
@@ -193,7 +193,7 @@ export default function Edit({ programme, lesson }) {
                                     )}
                                 </div>
                                 {errors.image && (
-                                    <p className="mt-1 text-sm text-red-600">{errors.image}</p>
+                                    <p className="mt-1 text-sm text-terracotta-600">{errors.image}</p>
                                 )}
                             </div>
 
@@ -220,7 +220,7 @@ export default function Edit({ programme, lesson }) {
                                                     e.stopPropagation();
                                                     removeVideo();
                                                 }}
-                                                className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                                                className="absolute top-2 right-2 bg-terracotta-500 text-white rounded-full p-1 hover:bg-terracotta-600"
                                             >
                                                 <svg
                                                     xmlns="http://www.w3.org/2000/svg"
@@ -268,7 +268,7 @@ export default function Edit({ programme, lesson }) {
                                     )}
                                 </div>
                                 {errors.video && (
-                                    <p className="mt-1 text-sm text-red-600">{errors.video}</p>
+                                    <p className="mt-1 text-sm text-terracotta-600">{errors.video}</p>
                                 )}
                             </div>
 
